@@ -33,7 +33,56 @@ After creating and entering a project directory with `mkdir myDirectoryName`, `c
   source venv/bin/activate
   ```
 ## The latest version of Django (3.2.6)
-Now that your virtualenv is active, enter:
+Now that your virtualenv is active, we will install the python library requirements for this project via this comman:
   ```
-  python -m pip install Django
+  python -m pip install -r requirements.txt
+  ```
+This will install django within your virtual environment. From here, we will prepare the application for deployment. To begin, cd into the project directory:
+
+  ```
+  cd subgen/
+  ```
+
+## Preparing the application 
+This creates the database file (db.sqllite3) and creates any required tables
+  ```
+  python manage.py migrate
+  ```
+You should see a list of database migrations, all with green 'OK' next to each entry. At this point, we now need to create the environment variables for the AWS api key, along with the Django Secret:
+  ```
+  export AWS_API=<Value>
+  export DJANGO_SECRET=<Value>
+  ```
+These are both values that are required for the application, without these, you cannot run the application.
+
+## Running the application
+Now that the environment variables are setup and the database migations are completed, we are ready to run the server.
+
+There are two settings files: dev and prod. The priamry differences are the DEBUG settings and the fact that the django secret is stored in the dev file, whereas the production file pulls from the environment. See below for different instrucitons depending on where this is being deployed and in what manner
+
+### Local Development Server
+Ensure you are in the directory for the application
+To run the application on your local machine, run the following command:
+  ```
+  python manage.py runserver --settings subgen.settings.dev
+  ```
+You can now access the application by going to this URL on your local machine: http://127.0.0.1:8000
+
+If needed, you can change the port that the server runs on:
+  ```
+  python manage.py runserver 127.0.0.1:<port_number> --settings subgen.settings.dev
+  ```
+
+### Production Server
+Ensure you are in the directory for the application
+To run the application on a server on your local network/an external server such as a Linode VPS, run the following command:
+  ```
+  python manage.py runserver 0.0.0.0:8000 --setting subgen.settings.prod
+  ```
+You can now access the application by going to the following URL: http://<ip address of machine>:8000
+If you cannot access the application, ensure your server can accept incoming connections on port 8000.
+
+If needed, you can change the port that the server runs on:
+  ```
+  python manage.py runserver 0.0.0.0:<port_number> --settings subgen.settings.prod
   ```
