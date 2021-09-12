@@ -26,7 +26,7 @@ SECRET_KEY = secret_key_file.readlines()[0]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '66.228.52.5']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '66.228.52.5', 'subgen.lselkins.com']
 
 
 # Application definition
