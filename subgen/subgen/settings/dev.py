@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-h&qwd*3du@_k)8%(*aw$*lvuay6))(hhipb@&24z!0b-ncg-_o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['66.228.52.5', '127.0.0.1']
 
 
 # Application definition
@@ -123,6 +123,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# AWS API Key
-AWS_API_KEY = os.environ.get('AWS_API')

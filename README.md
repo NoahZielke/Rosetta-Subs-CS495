@@ -48,17 +48,13 @@ This creates the database file (db.sqllite3) and creates any required tables
   ```
   python manage.py migrate
   ```
-You should see a list of database migrations, all with green 'OK' next to each entry. At this point, we now need to create the environment variables for the AWS api key, along with the Django Secret:
-  ```
-  export AWS_API=<Value>
-  export DJANGO_SECRET=<Value>
-  ```
-These are both values that are required for the application, without these, you cannot run the application.
+You should see a list of database migrations, all with green 'OK' next to each entry. At this point, we now need to configure the AWS user account. This configuration guide can be found here: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
+
 
 ## Running the application
 Now that the environment variables are setup and the database migations are completed, we are ready to run the server.
 
-There are two settings files: dev and prod. The priamry differences are the DEBUG settings and the fact that the django secret is stored in the dev file, whereas the production file pulls from the environment. See below for different instrucitons depending on where this is being deployed and in what manner
+There are two settings files: dev and prod. The primary differences are the DEBUG settings and the fact that the django secret is stored in the dev file, whereas the production file pulls from the environment. See below for different instrucitons depending on where this is being deployed and in what manner
 
 ### Local Development Server
 Ensure you are in the directory for the application
