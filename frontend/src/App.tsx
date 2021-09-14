@@ -1,22 +1,21 @@
 import React from "react";
 import { FileUpload } from "./components/FileUpload";
-import { Navbar } from "./components/Navbar";
+import Layout from "./Layout";
 
 function App() {
   return (
     <div className='App' style={{ margin: 0, padding: 0 }}>
-      <Navbar />
-      <h1> hello world</h1>
+      <Layout>
+        <a
+          className='App-link'
+          href='https://reactjs.org'
+          target='_blank'
+          rel='noopener noreferrer'>
+          React Docs
+        </a>
 
-      <a
-        className='App-link'
-        href='https://reactjs.org'
-        target='_blank'
-        rel='noopener noreferrer'>
-        React Docs
-      </a>
-
-      <FileUpload />
+        <FileUpload />
+      </Layout>
     </div>
   );
 }
