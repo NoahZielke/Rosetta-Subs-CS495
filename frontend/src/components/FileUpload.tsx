@@ -32,7 +32,10 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
     },
     [setFiles]
   );
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: ["audio/*", "video/*"],
+  });
 
   return (
     <div className='row p-4'>
