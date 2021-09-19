@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { SetStateAction, useCallback, useEffect, useState } from "react";
 import Dropzone, { useDropzone, DropzoneState } from "react-dropzone";
+import { resolve } from "url";
+import { getMetadata, getThumbnails } from "video-metadata-thumbnails";
 
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
@@ -17,18 +19,14 @@ const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
 );
 
 interface UploadDropzoneProps {
-  setFiles: (file: JSX.Element[]) => void;
+  setFiles: (file: File[]) => void;
 }
 const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      setFiles(acceptedFiles);
+      // Get Thumbnails:
       // Do something with the files
-      const files = acceptedFiles.map((file) => (
-        <div className='row' key={file.name}>
-          {file.name} - {file.size} bytes
-        </div>
-      ));
-      setFiles(files);
     },
     [setFiles]
   );
@@ -69,10 +67,41 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
     </div>
   );
 };
-export const FileUpload: React.FC = (props) => {
-  const [files, setFiles] = useState<JSX.Element[]>([]);
 
-  console.log(files);
+const FileList: React.FC<{ files: File[] }> = ({ files }) => {
+  const [fileStates, setFileStates] = useState();
+
+  async function generateThumbnail(file: File) {
+    const metadata = await getMetadata(file);
+    const thumbnails = await getThumbnails(file, {
+      quality: 0.6,
+      start: 0,
+      end: 0,
+    });
+    console.log("Metadata: ", metadata);
+    console.log("Thumbnails: ", thumbnails);
+
+    return thumbnails[0];
+  }
+
+  files.forEach(async (file) => {
+    console.log(file);
+    const thumbnail = await generateThumbnail(file);
+  });
+
+  return (
+    <>
+      {files.map((file) => (
+        <div className='row' key={file.name}>
+          {file.name} - {file.size} bytes
+        </div>
+      ))}
+      <div> files will de displayed here</div>
+    </>
+  );
+};
+export const FileUpload: React.FC = (props) => {
+  const [files, setFiles] = useState<File[]>([]);
 
   return (
     <section>
@@ -81,7 +110,7 @@ export const FileUpload: React.FC = (props) => {
         {files.length ? (
           <>
             <h4>Processing Files</h4>
-            <ul>{files}</ul>
+            <FileList files={files} />
           </>
         ) : (
           <h4>Upload a File to Begin</h4>
