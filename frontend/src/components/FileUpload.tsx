@@ -3,6 +3,7 @@ import Dropzone, { useDropzone, DropzoneState } from "react-dropzone";
 import { resolve } from "url";
 import { getMetadata, getThumbnails } from "video-metadata-thumbnails";
 
+
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
   height,
@@ -36,33 +37,35 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
   });
 
   return (
-    <div className='row p-4'>
-      <div className='col-4'>
-        <div
-          {...getRootProps()}
-          className=' d-flex flex-column justify-content-center align-items-center p-4 border'>
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <CloudUploadSVG width='128' height='128' />
-          ) : (
-            <CloudUploadSVG width='128' height='128' />
-          )}
+    <div>
+      <div className="row px-5 justify-content-center" style={{padding: "70px 0", alignItems: "center", justifyContent: "center",}}>
+        <div className="col-12 row main-module px-4">
+          <div className='col-4' style={{boxShadow: "0px 0px 5px #888888", clipPath: "inset(0px -5px 0px 0px)"}}>
+            <div
+              {...getRootProps()}
+              className=' d-flex flex-column justify-content-center align-items-center p-4'>
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <CloudUploadSVG width='128' height='128' />
+              ) : (
+                <CloudUploadSVG width='128' height='128' />
+              )}
 
-          <input {...getInputProps()} />
+              <input {...getInputProps()} />
 
-          <button type='button' className='btn btn-primary'>
-            Transcribe File
-          </button>
+              <button type='button' className='btn btn-primary'>
+                Transcribe File
+              </button>
+            </div>
+          </div>
+          <div className='col-8'>
+                <ol className='py-4' style={{fontSize:"larger", listStyle:"inside", textAlign:"left"}}>
+                  <li>Simply upload your video file, and press "Start"</li>
+                  <li>Select such and such options if you want such and such features</li>
+                  <li>Some of these instructions will change as get further along in the project</li>
+                </ol>
+          </div>
         </div>
-      </div>
-      <div className='col-8'>
-        <h1 className='row justify-content-center'> Use our transcribe tool</h1>
-        <text>
-          Here is a paragraph describing how to use our tool. We can have the
-          github button at the bottom of this text. When you upload the files we
-          will display a list of files processing. We should also get a color
-          scheme for brand colors.
-        </text>
       </div>
     </div>
   );
@@ -113,7 +116,8 @@ export const FileUpload: React.FC = (props) => {
             <FileList files={files} />
           </>
         ) : (
-          <h4>Upload a File to Begin</h4>
+          //<h4>Upload a File to Begin</h4>
+          <h4></h4> 
         )}
       </div>
     </section>
