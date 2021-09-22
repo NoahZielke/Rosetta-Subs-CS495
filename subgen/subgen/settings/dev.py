@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'backend.apps.BackendConfig',
     'rest_framework',
+    'django_crontab',
 ]
 SITE_ID = 1
 MIDDLEWARE = [
@@ -102,6 +103,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CRONJOBS = [
+    ('*/10 * * * *', 'subgen.backend.cron.check_uploads'),
+    ('*/1 * * * *', 'subgen.backend.cron.check_curr_jobs')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
