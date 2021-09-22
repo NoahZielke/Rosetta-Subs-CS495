@@ -99,4 +99,6 @@ def check_curr_jobs():
                         continue
                     else:
                         raise
+                job.status = 'Failed'
+                job.save()
 
