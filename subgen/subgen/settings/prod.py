@@ -24,7 +24,7 @@ secret_key_file = open('/home/django/secret_key.txt')
 SECRET_KEY = secret_key_file.readlines()[0]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '66.228.52.5', 'subgen.lselkins.com', 'localhost']
 
@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'backend.apps.BackendConfig',
+    'rest_framework',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +128,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_PASSWORD = open('/home/django/emailCreds.txt').readlines()[0]
+CRONJOBS = [
+    ('* * * * *', 'backend.cron.check_uploads'),
+    ('* * * * *', 'backend.cron.check_curr_jobs'),
+    ('* * * * *', 'backend.cron.check_all_jobs')
+]
