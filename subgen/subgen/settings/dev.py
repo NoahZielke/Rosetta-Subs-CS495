@@ -104,8 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('*/10 * * * *', 'subgen.backend.cron.check_uploads'),
-    ('*/1 * * * *', 'subgen.backend.cron.check_curr_jobs')
+    ('* * * * *', 'backend.cron.check_uploads'),
+    ('* * * * *', 'backend.cron.check_curr_jobs'),
+    ('* * * * *', 'backend.cron.check_all_jobs')
 ]
 
 # Internationalization
@@ -121,6 +122,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_PASSWORD = open(str(BASE_DIR) + '/emailCreds.txt').readlines()[0]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
