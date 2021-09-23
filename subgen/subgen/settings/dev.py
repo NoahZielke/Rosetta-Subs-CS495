@@ -104,9 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('* * * * *', 'backend.cron.check_uploads'),
-    ('* * * * *', 'backend.cron.check_curr_jobs'),
-    ('* * * * *', 'backend.cron.check_all_jobs')
+    ('* * * * *', 'backend.cron.check_uploads', '--settings subgen.settings.dev'),
+    ('* * * * *', 'backend.cron.check_curr_jobs', '--settings subgen.settings.dev'),
+    ('* * * * *', 'backend.cron.check_all_jobs', '--settings subgen.settings.dev')
 ]
 
 # Internationalization
