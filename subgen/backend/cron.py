@@ -16,7 +16,8 @@ from .srtUtils import *
 def check_uploads():
     s3 = boto3.resource('s3')
     transcribe = boto3.client('transcribe')
-
+    file = open(str(settings.BASE_DIR) + '/media/temp/didCronRun.txt', 'w')
+    file.write('The cronjob ran')
     newJobs = Job.objects.filter(status='Started')
     if newJobs:
         for job in newJobs:
