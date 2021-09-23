@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_crontab',
 ]
-
+SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
