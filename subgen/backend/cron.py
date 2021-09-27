@@ -135,7 +135,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {job.filename + (file.split('/')[-1]).split('.')[1]}",
+                f"attachment; filename= {(str(job.filename)).split('.')[0] + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         # with ZipFile(filename, 'w') as zip:
@@ -174,7 +174,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {job.filename + (file.split('/')[-1]).split('.')[1]}",
+                f"attachment; filename= {(str(job.filename)).split('.')[0] + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         
