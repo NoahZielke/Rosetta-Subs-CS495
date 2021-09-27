@@ -135,7 +135,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {(str(job.filename)).split('.')[0] + (file.split('/')[-1]).split('.')[1]}",
+                f"attachment; filename= {(str(job.filename)).split('.')[0]  + '.' + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         # with ZipFile(filename, 'w') as zip:
@@ -152,6 +152,8 @@ def check_all_jobs():
         
         job.status = 'Sent Confirmation'
         job.save()
+        for file in files:
+            os.remove(file)
     
     subject = "Your Transcription Job Has Failed"
     body = "Please find the FailureReason in the json file"
@@ -174,7 +176,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {(str(job.filename)).split('.')[0] + (file.split('/')[-1]).split('.')[1]}",
+                f"attachment; filename= {(str(job.filename)).split('.')[0] + '.' + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         
@@ -187,4 +189,6 @@ def check_all_jobs():
         
         job.status = 'Sent Confirmation'
         job.save()
+        for file in files:
+            os.remove(file)
     return
