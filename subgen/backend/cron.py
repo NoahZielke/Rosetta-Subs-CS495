@@ -109,6 +109,7 @@ def check_curr_jobs():
                 job.status = 'Failed'
                 job.save()
 
+
 def check_all_jobs():
     completedJobs = Job.objects.filter(status='Completed')
     subject = "Your Transcription Job Has Been Completed"
@@ -126,31 +127,25 @@ def check_all_jobs():
         message.attach(MIMEText(body, "plain"))
         
         files = [job.name + ext for ext in ['.json', '.txt', '.srt']]
-        filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
+        # filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
+        # jsonFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.json'
+        # txtFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.txt'
+        # srtFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.srt'
+        for file in files:
+            with open(file, "rb") as attachment:
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                f"attachment; filename= {file.split('/')[-1]}",
+            )
+            message.attach(part)
+        # with ZipFile(filename, 'w') as zip:
+        #     for file in files:
+        #         zip.write(os.path.join(str(settings.BASE_DIR)+'/media/temp/',filename), arcname=file)
 
-        with ZipFile(filename, 'w') as zip:
-            for file in files:
-                zip.write(os.path.join(str(settings.BASE_DIR)+'/media/temp/',filename), arcname=file)
 
-        # Open PDF file in binary mode
-        with open(filename, "rb") as attachment:
-            # Add file as application/octet-stream
-            # Email client can usually download this automatically as attachment
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
-
-        # Encode file in ASCII characters to send by email    
-        encoders.encode_base64(part)
-
-        # Add header as key/value pair to attachment part
-        part.add_header(
-            "Content-Disposition",
-            f"attachment; filename= {job.name + '.zip'}",
-        )
-
-        # Add attachment to message and convert message to string
-        message.attach(part)
-        
         text = message.as_string()
         # Log in to server using secure context and send email
         context = ssl.create_default_context()
@@ -176,28 +171,16 @@ def check_all_jobs():
         files = [job.name + ext for ext in ['.json']]
         filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
 
-        with ZipFile(filename, 'w') as zip:
-            for file in files:
-                zip.write(os.path.join(str(settings.BASE_DIR)+'/media/temp/',filename), arcname=file)
-
-        # Open PDF file in binary mode
-        with open(filename, "rb") as attachment:
-            # Add file as application/octet-stream
-            # Email client can usually download this automatically as attachment
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
-
-        # Encode file in ASCII characters to send by email    
-        encoders.encode_base64(part)
-
-        # Add header as key/value pair to attachment part
-        part.add_header(
-            "Content-Disposition",
-            f"attachment; filename= {job.name + '.zip'}",
-        )
-
-        # Add attachment to message and convert message to string
-        message.attach(part)
+        for file in files:
+            with open(file, "rb") as attachment:
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                f"attachment; filename= {file.split('/')[-1]}",
+            )
+            message.attach(part)
         
         text = message.as_string()
         # Log in to server using secure context and send email
