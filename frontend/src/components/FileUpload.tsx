@@ -155,14 +155,19 @@ export const FileUpload: React.FC = (props) => {
 
     setUploading(true);
     const formData = new FormData();
+
+    console.log("files request", files);
     files.forEach((file) => {
       formData.append("files", file);
+      formData.append("filename", new Date().toLocaleString());
+      formData.append("name", "name@");
     });
 
     axios({
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: "Basic bG9nYW46bG9nYW4=",
       },
       data: formData,
       url: serverURL + "/jobs/",
