@@ -126,7 +126,7 @@ def check_all_jobs():
         message["Bcc"] = receiver_email  # Recommended for mass emails
         message.attach(MIMEText(body, "plain"))
         
-        files = [str(settings.BASE_DIR) + job.name + ext for ext in ['.json', '.txt', '.srt']]
+        files = [str(settings.BASE_DIR) + '/media/temp/' + job.name + ext for ext in ['.json', '.txt', '.srt']]
         # filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
         # jsonFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.json'
         # txtFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.txt'
