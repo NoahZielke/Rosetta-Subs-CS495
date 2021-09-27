@@ -8,7 +8,7 @@ const AppHome = () => {
         <div>
             <nav className="navbar navbar-expand-md">
                 <a className="navbar-brand ps-3" href="/home" ><img src={teamLogo} alt="Translation app logo" /> </a>
-                <a className="navbar-brand app-name" href="/home">Our App Name</a>
+                <a className="navbar-brand app-name" href="/home">Rosetta-Subs</a>
                 <button className="navbar-toggler navbar-light" data-toggle="collapse" data-target="#collapse_target">
                     <span className="navbar-toggler-icon"></span>
                 </button>
