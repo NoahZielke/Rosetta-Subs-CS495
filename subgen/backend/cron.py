@@ -127,10 +127,7 @@ def check_all_jobs():
         message.attach(MIMEText(body, "plain"))
         
         files = [str(settings.BASE_DIR) + '/media/temp/' + job.name + ext for ext in ['.json', '.txt', '.srt']]
-        # filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
-        # jsonFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.json'
-        # txtFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.txt'
-        # srtFile = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.srt'
+
         for file in files:
             with open(file, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
@@ -138,7 +135,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {file.split('/')[-1]}",
+                f"attachment; filename= {job.filename + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         # with ZipFile(filename, 'w') as zip:
@@ -168,8 +165,7 @@ def check_all_jobs():
         message["Bcc"] = receiver_email  # Recommended for mass emails
         message.attach(MIMEText(body, "plain"))
         
-        files = [job.name + ext for ext in ['.json']]
-        filename = str(settings.BASE_DIR) + '/media/temp/' + job.name + '.zip'
+        files = [str(settings.BASE_DIR) + '/media/temp/' + job.name + ext for ext in ['.json']]
 
         for file in files:
             with open(file, "rb") as attachment:
@@ -178,7 +174,7 @@ def check_all_jobs():
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition",
-                f"attachment; filename= {file.split('/')[-1]}",
+                f"attachment; filename= {job.filename + (file.split('/')[-1]).split('.')[1]}",
             )
             message.attach(part)
         
