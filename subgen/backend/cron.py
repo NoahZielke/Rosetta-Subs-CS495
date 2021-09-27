@@ -163,7 +163,7 @@ def check_all_jobs():
     
     subject = "Your Transcription Job Has Failed"
     body = "Please find the FailureReason in the json file"
-    failedJobs = Job.objects.filter(status='Completed')
+    failedJobs = Job.objects.filter(status='Failed')
     for job in failedJobs:
         receiver_email = job.email_address
         message = MIMEMultipart()

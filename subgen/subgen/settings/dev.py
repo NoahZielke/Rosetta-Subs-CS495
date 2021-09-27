@@ -41,11 +41,15 @@ INSTALLED_APPS = [
     'backend.apps.BackendConfig',
     'rest_framework',
     'django_crontab',
+    'corsheaders',
+    
 ]
 SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -55,6 +59,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'subgen.urls'
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    'GET', 'POST',
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -104,9 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('* * * * *', 'backend.cron.check_uploads', '--settings subgen.settings.dev'),
-    ('* * * * *', 'backend.cron.check_curr_jobs', '--settings subgen.settings.dev'),
-    ('* * * * *', 'backend.cron.check_all_jobs', '--settings subgen.settings.dev')
+    ('*/2 * * * *', 'backend.cron.check_uploads', '--settings subgen.settings.dev'),
+    ('*/1 * * * *', 'backend.cron.check_curr_jobs', '--settings subgen.settings.dev'),
+    ('*/5 * * * *', 'backend.cron.check_all_jobs', '--settings subgen.settings.dev')
 ]
 
 # Internationalization
