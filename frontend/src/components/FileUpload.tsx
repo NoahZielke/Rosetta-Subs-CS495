@@ -1,9 +1,10 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import React, { FormEvent, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { getMetadata, getThumbnails } from "video-metadata-thumbnails";
 import { serverURL } from "../constants";
-import StartButton from "./StartButton";
+import EmailModal from "./EmailModal";
+import TranscriptionJob from "./TranscriptionJob";
 
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
@@ -99,24 +100,6 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
 const FileList: React.FC<{ files: File[] }> = ({ files }) => {
   const [fileStates, setFileStates] = useState();
 
-  async function generateThumbnail(file: File) {
-    const metadata = await getMetadata(file);
-    const thumbnails = await getThumbnails(file, {
-      quality: 0.6,
-      start: 0,
-      end: 0,
-    });
-    console.log("Metadata: ", metadata);
-    console.log("Thumbnails: ", thumbnails);
-
-    return thumbnails[0];
-  }
-
-  files.forEach(async (file) => {
-    console.log(file);
-    const thumbnail = await generateThumbnail(file);
-  });
-
   return (
     <>
       {files.map((file) => (
@@ -134,83 +117,29 @@ const FileList: React.FC<{ files: File[] }> = ({ files }) => {
 
 export const FileUpload: React.FC = (props) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState<Boolean>(false);
-
-  const isValidFileType = (files: File[]): boolean => {
-    return files.every((file) => {
-      console.log(file.type);
-      for (let type of acceptedTypes) {
-        if (type.test(file.type)) return true;
-      }
-    });
-  };
-
-  const handleFileUpload = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!isValidFileType(files)) {
-      alert("Only images are allowed (png or jpg)");
-      return;
-    }
-
-    setUploading(true);
-    const formData = new FormData();
-
-    console.log("files request", files);
-    files.forEach((file) => {
-      formData.append("files", file);
-      formData.append("filename", new Date().toLocaleString());
-      formData.append("name", "name@");
-    });
-
-    axios({
-      method: "POST",
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: "Basic bG9nYW46bG9nYW4=",
-      },
-      data: formData,
-      url: serverURL + "/jobs/",
-      // onUploadProgress: (ev: ProgressEvent) => {
-      //   const progress = (ev.loaded / ev.total) * 100;
-      //   updateUploadProgress(Math.round(progress));
-      // },
-    })
-      .then((resp: AxiosResponse<any>) => {
-        console.log(resp);
-        // our mocked response will always return true
-        // in practice, you would want to use the actual response object
-        // setUploadStatus(true);
-        // setUploading(false);
-        // getBase64(file, (uri: string) => {
-        //   setImageURI(uri);
-        // });
-      })
-      .catch((err: Error) => console.error(err));
-  };
 
   if (files.length) {
     return (
-      <form className='form' onSubmit={(e) => handleFileUpload(e)}>
-        <UploadDropzone setFiles={(files) => setFiles(files)} />
+      <>
+        <UploadDropzone setFiles={(file) => setFiles(file)} />
         <div className='pt-4'>
           <>
             <h4>Processing Files</h4>
             <FileList files={files} />
-            <StartButton />
+            <TranscriptionJob file={files[0]} />
           </>
         </div>
-      </form>
+      </>
     );
   }
 
   return (
-    <form className='form'>
+    <>
       <UploadDropzone setFiles={(files) => setFiles(files)} />
       <div className='pt-4'>
         <h4>Upload a File to Begin</h4>
         <h4></h4>
       </div>
-    </form>
+    </>
   );
 };
