@@ -3,7 +3,6 @@ from django.urls.resolvers import URLPattern
 import uuid, random
 
 class Job(models.Model):
-    name = models.CharField(primary_key=True, max_length=36, default=str(uuid.uuid4()).replace('-', '') + str(random.randint(1,9999)), editable=False)
     filename = models.TextField()
     file = models.FileField(upload_to='media/uploads/', default='default/testAudio.mp3')
     date = models.DateTimeField(auto_now_add=True)
