@@ -37,7 +37,7 @@ const EmailModal: React.FC<{
         Authorization: "Basic bHNlbGtpbnM6c1ZENF9WWkMzbks4=",
       },
       data: formData,
-      url: "https://66.228.52.5:8000/jobs/",
+      url: "https://subgen.lselkins.com/jobs/",
       // onUploadProgress: (ev: ProgressEvent) => {
       //   const progress = (ev.loaded / ev.total) * 100;
       //   updateUploadProgress(Math.round(progress));
