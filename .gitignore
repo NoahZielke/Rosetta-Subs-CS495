@@ -1,3 +1,6 @@
 venv/
 *.sqllite3
 subgen/media/uploads/*
+
+# Local Netlify folder
+.netlify
