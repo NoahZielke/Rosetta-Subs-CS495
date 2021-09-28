@@ -11,7 +11,7 @@ const AppHome = () => {
             <img src={teamLogo} alt='Translation app logo' />{" "}
           </a>
           <a className='navbar-brand app-name' href='/home'>
-            Our App Name
+            Rosetta-Subs
           </a>
           <button
             className='navbar-toggler navbar-light'
