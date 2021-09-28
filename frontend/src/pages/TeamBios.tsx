@@ -125,6 +125,36 @@ const TeamBios = () => {
         </div>
       </div>
 
+      <div className='row justify-content-center' style={{ padding: "15px 0" }}>
+        <div className='col-10 row main-module pl-0'>
+          <img
+            src={puffin}
+            alt='Cory Milsap'
+            className='col-4 pl-0'
+            style={{ borderRadius: "10px" }}
+          />
+          <div className='col-8'>
+            <h3 className='pt-4'>Cory Milsap</h3>
+            <p className='pt-4 px-2 biography-module-text'>
+              I am graduating December 2021 with a B.S in Computer Science. I
+              plan to return to Goldman Sachs as a Financial Engineer. Interests
+              include blockchain, football, and reading.
+            </p>
+            <div className='pb-4 pt-2'>
+              <button
+                onClick={() => showHideContact("crmilsap@crimson.ua.edu", 3)}
+                className='btn btn-primary py-2'>
+                Click to Show Contact Info
+              </button>
+              <p
+                id='contact-info-3'
+                className='pt-2 main-module-text'
+                style={{ display: "none" }}></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <footer></footer>
       <div className='py-2 px-3 attribution'>
         Icons made by{" "}
