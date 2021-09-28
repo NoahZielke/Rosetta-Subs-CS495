@@ -23,7 +23,7 @@ def check_uploads():
             #Video file location
             uploadFile = str(settings.BASE_DIR)+"/media/uploads/" + str(job.file).split('/')[-1]
             #Audio file location
-            filename = str(settings.BASE_DIR)+'/media/uploads/' + job.name + ".mp3"
+            filename = str(settings.BASE_DIR)+'/media/uploads/' + job.id + ".mp3"
             myFile = Path(uploadFile)
             #Convert Video to audio
             if myFile.exists():
@@ -37,14 +37,14 @@ def check_uploads():
                 print("Unable to open file: " + filename)
                 continue
             with data:
-                newLoc = "subgen_input/" + job.name + ".mp3"
+                newLoc = "subgen_input/" + job.id + ".mp3"
                 s3.Bucket('subgenstoragebucket').put_object(Key=newLoc, Body=data)
                 
                 #Request Transcription Job
                 job_uri = "s3://subgenstoragebucket/" + newLoc
-                outputFile = "subgen_output/" + job.name + ".json"
+                outputFile = "subgen_output/" + job.id + ".json"
                 transcribe.start_transcription_job(
-                        TranscriptionJobName=job.name,
+                        TranscriptionJobName=job.id,
                         Media={'MediaFileUri': job_uri},
                         OutputBucketName="subgenstoragebucket",
                         OutputKey=outputFile,
@@ -66,8 +66,8 @@ def check_curr_jobs():
     if currJobs:
         for job in currJobs:
     
-            filename = job.name + ".json"
-            status = transcribe.get_transcription_job(TranscriptionJobName=job.name)
+            filename = job.id + ".json"
+            status = transcribe.get_transcription_job(TranscriptionJobName=job.id)
             if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED']:
                 #File transcribed, pulling json and converting to srt
                 #new files to be found in media/temp with file name = job name
@@ -84,12 +84,12 @@ def check_curr_jobs():
                 
                 #json to srt
                 with open(str(settings.BASE_DIR)+'/media/temp/'+filename) as f:
-                    data = writeTranscriptToSRT(f.read(), 'en', str(settings.BASE_DIR)+'/media/temp/'+job.name+'.srt')
+                    data = writeTranscriptToSRT(f.read(), 'en', str(settings.BASE_DIR)+'/media/temp/'+job.id+'.srt')
     
                 #json to txt
                 jsonFile = json.load(open(str(settings.BASE_DIR)+'/media/temp/'+filename, 'r'))
                 transcript = jsonFile['results']['transcripts'][0]['transcript']
-                with open(str(settings.BASE_DIR)+'/media/temp/'+job.name+'.txt', 'w') as transcriptFile:
+                with open(str(settings.BASE_DIR)+'/media/temp/'+job.id+'.txt', 'w') as transcriptFile:
                     transcriptFile.write(transcript)
     
                 #Change Job status, job completed
@@ -126,7 +126,7 @@ def check_all_jobs():
         message["Bcc"] = receiver_email  # Recommended for mass emails
         message.attach(MIMEText(body, "plain"))
         
-        files = [str(settings.BASE_DIR) + '/media/temp/' + job.name + ext for ext in ['.json', '.txt', '.srt']]
+        files = [str(settings.BASE_DIR) + '/media/temp/' + job.id + ext for ext in ['.json', '.txt', '.srt']]
 
         for file in files:
             with open(file, "rb") as attachment:
@@ -167,7 +167,7 @@ def check_all_jobs():
         message["Bcc"] = receiver_email  # Recommended for mass emails
         message.attach(MIMEText(body, "plain"))
         
-        files = [str(settings.BASE_DIR) + '/media/temp/' + job.name + ext for ext in ['.json']]
+        files = [str(settings.BASE_DIR) + '/media/temp/' + job.id + ext for ext in ['.json']]
 
         for file in files:
             with open(file, "rb") as attachment:
