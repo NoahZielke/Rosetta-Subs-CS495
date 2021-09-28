@@ -16,7 +16,7 @@ const TeamBios = () => {
     <div>
       <div>
         <nav className='navbar navbar-expand-md'>
-          <a className='navbar-brand ps-3' href='/home'>
+          <a className='navbar-brand pl-3' href='/home'>
             <img src={teamLogo} alt='Translation app logo' />{" "}
           </a>
           <a className='navbar-brand app-name' href='/home'>
@@ -30,7 +30,7 @@ const TeamBios = () => {
           </button>
           {/* Image source: https://www.flaticon.com/free-icon/translation_2793580 */}
           <div className='collapse navbar-collapse' id='collapse_target'>
-            <ul className='navbar-nav ms-auto'>
+            <ul className='navbar-nav ml-auto'>
               <li className='nav-item px-2'>
                 <a className='nav-link navbar-item' href='/home'>
                   Home
@@ -41,7 +41,7 @@ const TeamBios = () => {
                   Web App
                 </a>
               </li>
-              <li className='nav-item ps-2 pe-4 active'>
+              <li className='nav-item pl-2 pr-4 active'>
                 <a className='nav-link navbar-item' href='/team-bios'>
                   Team Member Bios
                 </a>
@@ -52,11 +52,11 @@ const TeamBios = () => {
       </div>
 
       <div className='row justify-content-center' style={{ padding: "70px 0" }}>
-        <div className='col-10 row main-module ps-0'>
+        <div className='col-10 row main-module pl-0'>
           <img
             src={puffin}
             alt='Logan Elkins'
-            className='col-4 ps-0'
+            className='col-4 pl-0'
             style={{ borderRadius: "10px" }}
           />
           <div className='col-8'>
@@ -88,11 +88,11 @@ const TeamBios = () => {
       </div>
 
       <div className='row justify-content-center' style={{ padding: "15px 0" }}>
-        <div className='col-10 row main-module ps-0'>
+        <div className='col-10 row main-module pl-0'>
           <img
             src={noah}
             alt='Noah Zielke'
-            className='col-4 ps-0'
+            className='col-4 pl-0'
             style={{ borderRadius: "10px" }}
           />
           <div className='col-8'>

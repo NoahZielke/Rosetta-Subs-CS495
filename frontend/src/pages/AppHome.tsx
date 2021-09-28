@@ -7,7 +7,7 @@ const AppHome = () => {
     <div>
       <div>
         <nav className='navbar navbar-expand-md'>
-          <a className='navbar-brand ps-3' href='/home'>
+          <a className='navbar-brand pl-3' href='/home'>
             <img src={teamLogo} alt='Translation app logo' />{" "}
           </a>
           <a className='navbar-brand app-name' href='/home'>
@@ -21,7 +21,7 @@ const AppHome = () => {
           </button>
           {/* Image source: https://www.flaticon.com/free-icon/translation_2793580 */}
           <div className='collapse navbar-collapse' id='collapse_target'>
-            <ul className='navbar-nav ms-auto'>
+            <ul className='navbar-nav ml-auto'>
               <li className='nav-item px-2'>
                 <a className='nav-link navbar-item' href='/home'>
                   Home
@@ -32,7 +32,7 @@ const AppHome = () => {
                   Web App
                 </a>
               </li>
-              <li className='nav-item ps-2 pe-4'>
+              <li className='nav-item pl-2 pr-4'>
                 <a className='nav-link navbar-item' href='/team-bios'>
                   Team Member Bios
                 </a>
