@@ -8,7 +8,7 @@ const LandingPage = () => {
             <div>
                 <nav className="navbar navbar-expand-md">
                     <a className="navbar-brand ps-3" href="/home" ><img src={teamLogo} alt="Translation app logo" /> </a>
-                    <a className="navbar-brand app-name" href="/home">Our App Name</a>
+                    <a className="navbar-brand app-name" href="/home">Rosetta-Subs</a>
                     <button className="navbar-toggler navbar-light" data-toggle="collapse" data-target="#collapse_target">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -32,7 +32,7 @@ const LandingPage = () => {
             <div className="row" style={{padding: "70px 0"}}>
                 <div className="col-8 main-module justify-content-center">
                     <p className="pt-4 pb-2 px-2 main-module-text">
-                        (App name) is an app designed to make adding subtitles to a video in any language easy
+                        Rosetta-Subs is an app designed to make adding subtitles to a video in any language easy
                     </p>
                     <p className="main-module-text pb-3">
                         This browser-based application requires no setup on the part of the user
