@@ -29,11 +29,7 @@ def completed_job(request):
     import datetime
     print('Received a request')
     if request.method == 'POST':
-        for key, value in request.POST.items():
-            print('Key: %s' % (key) ) 
-            # print(f'Key: {key}') in Python >= 3.7
-            print('Value %s' % (value) )
-            # print(f'Value: {value}') in Python >= 3.7
+        print(request.body)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
