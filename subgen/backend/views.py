@@ -30,7 +30,7 @@ def completed_job(request):
     from django.http import HttpResponse
     import datetime
     if request.method == 'POST':
-        requestBodyStripped = (request.body).strip("'<>() ")
+        requestBodyStripped = (request.body).strip(b"'<>() ")
         requestBodyJson = requestBodyStripped.replace('\'', '\"')
         jsonObj = json.loads(requestBodyJson)
         jobName = jsonObj['detail']['TranscriptionJobName']
