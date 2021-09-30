@@ -15,7 +15,7 @@ from .srtUtils import *
 
 def pullJSONGenSRTCompleted(jobName):
     s3 = boto3.resource('s3')
-    job = Job.objects.filter(id=jobName)
+    job = Job.objects.get(id=jobName)
     filename = str(job.id) + ".json"
     try:
         print('getting json file from bucket')
@@ -42,7 +42,7 @@ def pullJSONGenSRTCompleted(jobName):
     job.save()
 
 def sendFilesCompleted(jobName):
-    job = Job.objects.filter(id=jobName)
+    job = Job.objects.get(id=jobName)
     subject = "Your Transcription Job Has Been Completed"
     body = "Please find your subtitle file, transcription and AWS json information file in the atttached zip file"
     sender_email = "noreply.subgen@gmail.com"
@@ -82,7 +82,7 @@ def sendFilesCompleted(jobName):
         os.remove(file)
 
 def pullJSONGenSRTFailed(jobName):
-    job = Job.objects.filter(id=jobName)
+    job = Job.objects.get(id=jobName)
     filename = str(job.id) + ".json"
     s3 = boto3.resource('s3')
     try:
@@ -96,7 +96,7 @@ def pullJSONGenSRTFailed(jobName):
     job.save()
 
 def sendFilesFailed(jobName):
-    job = Job.objects.filter(id=jobName)
+    job = Job.objects.get(id=jobName)
     subject = "Your Transcription Job Has Failed"
     body = "Please find the FailureReason in the json file"
     sender_email = "noreply.subgen@gmail.com"
