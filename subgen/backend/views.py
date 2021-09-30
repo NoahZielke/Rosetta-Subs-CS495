@@ -4,7 +4,7 @@ from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
-import utils
+from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed
 import json
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -35,8 +35,8 @@ def completed_job(request):
         requestBodyJson = requestBody.strip("'<>() ").replace('\'', '\"')
         jsonObj = json.loads(requestBodyJson)
         jobName = jsonObj['detail']['TranscriptionJobName']
-        utils.pullJSONGenSRTCompleted(jobName)
-        utils.sendFilesCompleted(jobName)
+        pullJSONGenSRTCompleted(jobName)
+        sendFilesCompleted(jobName)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
