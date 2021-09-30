@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { AnyARecord } from "dns";
 import React, { useState } from "react";
 import {
   Alert,
@@ -29,6 +30,17 @@ const EmailModal: React.FC<{
       setEmailError('')
     } else {
       setEmailError('Please enter a valid email')
+    }
+  }
+
+  const [buttonState, setButtonState] = useState(true)
+  const submitButtonState = (e?:any) => {
+    var email = e.target.value
+  
+    if ((validator.isEmail(email)) && (uploading === false)) {
+      setButtonState(false) //button is enabled 
+    } else {
+      setButtonState(true)  //button is disabled
     }
   }
 
@@ -79,7 +91,7 @@ const EmailModal: React.FC<{
           {" "}
           <FormControl
             placeholder='Email'
-            onChange={(e) => {setEmail(e.target.value); validateEmail(e)}}
+            onChange={(e) => {setEmail(e.target.value); validateEmail(e); submitButtonState(e)}}
           />
         </InputGroup>
         <p className="text-center pt-3" style={{color: "rgb(214, 52, 52)"}}>{emailError}</p>
@@ -88,7 +100,7 @@ const EmailModal: React.FC<{
         <Button variant='secondary' onClick={handleClose}>
           Close
         </Button>
-        <Button variant='primary' onClick={submitForm} disabled={uploading}>
+        <Button variant='primary' onClick={submitForm} disabled={buttonState}>
           Submit
         </Button>
       </Modal.Footer>
