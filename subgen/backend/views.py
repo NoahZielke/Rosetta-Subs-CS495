@@ -23,7 +23,7 @@ class JobViewSet(viewsets.ModelViewSet):
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-# @csrf_exempt
+@csrf_exempt
 def completed_job(request):
     from django.http import HttpResponse
     import datetime
