@@ -29,13 +29,10 @@ class JobViewSet(viewsets.ModelViewSet):
 def completed_job(request):
     from django.http import HttpResponse
     import datetime
-    print('Received a request')
     if request.method == 'POST':
         requestBody = request.body
         print(requestBody)
-        print(requestBody.encode())
-        print(type(requestBody.encode()))
-        requestBodyJson = requestBody.strip("'<>() ").replace('\'', '\"')
+        requestBodyJson = (request.body).strip("'<>() ").replace('\'', '\"')
         jsonObj = json.loads(requestBodyJson)
         jobName = jsonObj['detail']['TranscriptionJobName']
         pullJSONGenSRTCompleted(jobName)
