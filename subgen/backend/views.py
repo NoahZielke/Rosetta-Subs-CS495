@@ -28,8 +28,8 @@ def completed_job(request):
     from django.http import HttpResponse
     import datetime
     print('Received a request')
-    if request.method == 'GET':
-        print(request.GET)
+    if request.method == 'POST':
+        print(request.POST)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
