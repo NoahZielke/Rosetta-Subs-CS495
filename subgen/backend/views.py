@@ -32,6 +32,9 @@ def completed_job(request):
     print('Received a request')
     if request.method == 'POST':
         requestBody = request.body
+        print(requestBody)
+        print(requestBody.encode())
+        print(type(requestBody.encode()))
         requestBodyJson = requestBody.strip("'<>() ").replace('\'', '\"')
         jsonObj = json.loads(requestBodyJson)
         jobName = jsonObj['detail']['TranscriptionJobName']
