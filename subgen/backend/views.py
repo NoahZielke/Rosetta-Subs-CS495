@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, parsers
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import Job
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,13 +23,13 @@ class JobViewSet(viewsets.ModelViewSet):
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-
+# @csrf_exempt
 def completed_job(request):
     from django.http import HttpResponse
     import datetime
     print('Received a request')
-    if request.method == 'POST':
-        print(request.POST)
+    if request.method == 'GET':
+        print(request.GET)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
