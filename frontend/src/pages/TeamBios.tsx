@@ -157,7 +157,7 @@ const TeamBios = () => {
 
       <footer></footer>
       <div className='py-2 px-3 attribution'>
-        Icons made by{" "}
+        App logo made by{" "}
         <a href='https://www.freepik.com' title='Freepik'>
           Freepik
         </a>{" "}
