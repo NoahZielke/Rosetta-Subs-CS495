@@ -8,6 +8,7 @@ import {
   InputGroup,
   Modal,
 } from "react-bootstrap";
+import validator from 'validator';
 
 const EmailModal: React.FC<{
   show: boolean;
@@ -19,6 +20,17 @@ const EmailModal: React.FC<{
   const [alert, setAlert] = useState<React.ReactElement<AlertProps> | null>(
     null
   );
+
+  const [emailError, setEmailError] = useState('')
+  const validateEmail = (e:any) => {
+    var email = e.target.value
+  
+    if ((validator.isEmail(email)) || (email === '')) {
+      setEmailError('')
+    } else {
+      setEmailError('Please enter a valid email')
+    }
+  }
 
   const submitForm = () => {
     setAlert(null);
@@ -67,9 +79,10 @@ const EmailModal: React.FC<{
           {" "}
           <FormControl
             placeholder='Email'
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {setEmail(e.target.value); validateEmail(e)}}
           />
         </InputGroup>
+        <p className="text-center pt-3" style={{color: "rgb(214, 52, 52)"}}>{emailError}</p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant='secondary' onClick={handleClose}>

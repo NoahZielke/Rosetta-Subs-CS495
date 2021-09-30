@@ -125,7 +125,7 @@ const TeamBios = () => {
         </div>
       </div>
 
-      <div className='row justify-content-center' style={{ padding: "15px 0" }}>
+      <div className='row justify-content-center' style={{ padding: "70px 0" }}>
         <div className='col-10 row main-module pl-0'>
           <img
             src={puffin}
