@@ -31,7 +31,7 @@ def completed_job(request):
     import datetime
     if request.method == 'POST':
         requestBodyStripped = (request.body).strip(b"'<>() ")
-        requestBodyJson = requestBodyStripped.replace('\'', '\"')
+        requestBodyJson = requestBodyStripped.replace(b'\'', b'\"')
         jsonObj = json.loads(requestBodyJson)
         jobName = jsonObj['detail']['TranscriptionJobName']
         pullJSONGenSRTCompleted(jobName)
