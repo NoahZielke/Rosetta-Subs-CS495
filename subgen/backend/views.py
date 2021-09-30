@@ -23,10 +23,18 @@ class JobViewSet(viewsets.ModelViewSet):
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
+
 def completed_job(request):
     from django.http import HttpResponse
     import datetime
     print('Received a request')
+    if request.method == 'POST':
+        print(request.POST)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
+
+
+def failed_job(request):
+
+    return
