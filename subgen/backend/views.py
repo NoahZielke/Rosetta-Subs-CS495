@@ -26,7 +26,7 @@ class JobViewSet(viewsets.ModelViewSet):
 def completed_job(request):
     from django.http import HttpResponse
     import datetime
-
+    print('Received a request')
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
