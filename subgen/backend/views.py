@@ -4,6 +4,8 @@ from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
+import utils
+import json
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -29,11 +31,15 @@ def completed_job(request):
     import datetime
     print('Received a request')
     if request.method == 'POST':
-        print(request.body)
+        requestBody = request.body
+        requestBodyJson = requestBody.strip("'<>() ").replace('\'', '\"')
+        jsonObj = json.loads(requestBodyJson)
+        jobName = jsonObj['detail']['TranscriptionJobName']
+        utils.pullJSONGenSRTCompleted(jobName)
+        utils.sendFilesCompleted(jobName)
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
-
 
 def failed_job(request):
 
