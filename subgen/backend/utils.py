@@ -133,3 +133,51 @@ def sendFilesFailed(jobName):
     job.save()
     for file in files:
         os.remove(file)
+
+def transcribeNewUploads():
+    s3 = boto3.resource('s3')
+    transcribe = boto3.client('transcribe')
+    newJobs = Job.objects.filter(status='Started')
+    #Still checking with transcribe for all 'Started' Jobs in case of multiple file uploads or possibly ignored job
+    if newJobs:
+        for job in newJobs:
+    
+            #Video file location
+            uploadFile = str(settings.BASE_DIR)+"/media/uploads/" + str(job.file).split('/')[-1]
+            #Audio file location
+            filename = str(settings.BASE_DIR)+'/media/uploads/' + str(job.id) + ".mp3"
+            myFile = Path(uploadFile)
+            #Convert Video to audio
+            if myFile.exists():
+                currClip = mp.VideoFileClip(uploadFile)
+                currClip.audio.write_audiofile(filename)
+            
+            #upload audio file to s3 bucket
+            try:
+                data = open(filename, 'rb')
+            except OSError:
+                print("Unable to open file: " + filename)
+                continue
+            with data:
+                newLoc = "subgen_input/" + str(job.id) + ".mp3"
+                s3.Bucket('subgenstoragebucket').put_object(Key=newLoc, Body=data)
+                
+                #Request Transcription Job
+                job_uri = "s3://subgenstoragebucket/" + newLoc
+                outputFile = "subgen_output/" + str(job.id) + ".json"
+                transcribe.start_transcription_job(
+                        TranscriptionJobName=str(job.id),
+                        Media={'MediaFileUri': job_uri},
+                        OutputBucketName="subgenstoragebucket",
+                        OutputKey=outputFile,
+                        LanguageCode='en-US'
+                )
+    
+                #Change job status
+                job.status='Transcribing'
+                job.save()
+        
+                # If we want to delete file after sent to s3: 
+                os.remove(filename)
+
+

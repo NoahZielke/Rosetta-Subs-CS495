@@ -111,9 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CRONJOBS = [
-    ('*/2 * * * *', 'backend.cron.check_uploads', '--settings subgen.settings.dev'),
-]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

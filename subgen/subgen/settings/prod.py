@@ -139,5 +139,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_PASSWORD = open('/home/django/emailCreds.txt').readlines()[0]
 CRONJOBS = [
-    ('*/2 * * * *', 'backend.cron.check_uploads', '--settings subgen.settings.prod'),
 ]
