@@ -80,8 +80,8 @@ const EmailModal: React.FC<{
         Authorization: "Basic bHNlbGtpbnM6c1ZENF9WWkMzbks4=",
       },
       data: formData,
-      // url: "https://subgen.lselkins.com/jobs/",
-      url: "https://thisdoesnotexist/",
+      url: "https://subgen.lselkins.com/jobs/",
+      // url: "https://thisdoesnotexist/",
       // onUploadProgress: (ev: ProgressEvent) => {
       //   const progress = (ev.loaded / ev.total) * 100;
       //   updateUploadProgress(Math.round(progress));
