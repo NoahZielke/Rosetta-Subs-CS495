@@ -143,7 +143,7 @@ def transcribeNewUploads():
         for job in newJobs:
     
             #Video file location
-            uploadFile = str(settings.BASE_DIR)+"/media/uploads/" + str(job.file).split('/')[-1]
+            uploadFile = str(settings.BASE_DIR)+"/media/uploads/" + str(job.filename).split('/')[-1]
             #Audio file location
             filename = str(settings.BASE_DIR)+'/media/uploads/' + str(job.id) + ".mp3"
             myFile = Path(uploadFile)
