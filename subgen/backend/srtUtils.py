@@ -88,7 +88,7 @@ def writeTranscriptToSRT( transcript, sourceLangCode, srtFileName ):
 # Parameters: 
 #                 transcript - the JSON output from Amazon Transcribe
 #                 sourceLangCode - the language code for the original content (e.g. English = "EN")
-#                 targetLangCode - the language code for the translated content (e.g. Spanis h = "ES")
+#                 targetLangCode - the language code for the translated content (e.g. Spanish = "ES")
 #                 srtFileName - the name of the SRT file (e.g. "mySRT.SRT")
 # ==================================================================================
 def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileName, region ):
