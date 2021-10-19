@@ -82,15 +82,3 @@ If needed, you can change the port that the server runs on:
   ```
   python manage.py runserver 0.0.0.0:<port_number> --settings subgen.settings.prod
   ```
-
-# Running Tests
-To run the Pytest unit tests, make sure that the requirements are installed, and run:  
-*(assuming you are in Subtitle-Generator-cs495/)*
-  ```
-  cd subgen/testing/
-  pytest
-  ```
-To increase the verbosity (how detailed) the test responses are, you can run:
-  ```
-  pytest -v (add more v's for more verbosity)
-  ```
