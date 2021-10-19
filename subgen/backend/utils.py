@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import moviepy.editor as mp
 from .srtUtils import *
+import eng_to_ipa as ipa
 
 def pullJSONGenSRTCompleted(jobName):
     s3 = boto3.resource('s3')
@@ -180,4 +181,39 @@ def transcribeNewUploads():
                 # If we want to delete file after sent to s3: 
                 os.remove(filename)
 
+#Function to create text file for vocab and upload to s3
+#args --
+#   user - username for vocab file
+#   words - array of words/phrases/acronym
+def genVocabFile(user, words):
+    filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
+    f = open(filename, "w+")
+    f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
+    for word in words:
+        if ipa.isin_cmu(word):
+            ipaWord = ipa.convert(word)
+        else:
+            ipaWord = ""
+        dashedWord = word.replace(' ', '-')
+        newLine = dashedWord + "\t" + ipaWord + "\t\t" + word + "\r\n"
+        f.write(newLine)
+    f.close()
+
+    uploadFileName = "vocab/" + user + ".txt"
+    s3 = boto3.client('s3')
+    data = open(filename, 'rb')
+    s3.Bucket('subgenstoragebucket').put_object(Key=uploadFileName, Body=data)
+    os.remove(filename)
+
+    transcribe = boto3.client('transcribe')
+    uriLoc = "s3://subgenstoragebucket/" + uploadFileName
+    transcribe.create_vocabulary(
+            VocabularyName=user,
+            LanguageCode='en-US',
+            VocabularyFileUri=uriLoc
+    )
+
+    #Update user model to indicate vocabulary exists for user
+    #currUser = User.objects.filter(name=user)
+    #currUser.vocab = true
 
