@@ -40,16 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'backend.apps.BackendConfig',
     'rest_framework',
-    'django_crontab',
-    'corsheaders',
-    
 ]
 SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -59,10 +54,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'subgen.urls'
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_METHODS = [
-    'GET', 'POST',
-]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -125,7 +116,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-EMAIL_PASSWORD = open(str(BASE_DIR) + '/emailCreds.txt').readlines()[0]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

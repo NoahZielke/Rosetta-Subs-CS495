@@ -1,4 +1,3 @@
 venv/
 *.sqllite3
 subgen/media/uploads/*
-emailCreds.txt
