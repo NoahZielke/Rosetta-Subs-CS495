@@ -53,3 +53,9 @@ def completed_job(request):
 def failed_job(request):
 
     return
+
+def input_vocabulary(request):
+
+    now = datetime.datetime.now()
+    html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html):

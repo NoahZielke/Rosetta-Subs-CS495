@@ -1,4 +1,10 @@
 venv/
 *.sqllite3
 subgen/media/uploads/*
+<<<<<<< HEAD
 emailCreds.txt
+=======
+
+# Local Netlify folder
+.netlify
+>>>>>>> 787f7b687414b1bf6c30fba898a868b7d8b75dcd
