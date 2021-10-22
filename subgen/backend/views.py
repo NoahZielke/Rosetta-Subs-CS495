@@ -5,6 +5,18 @@ from .serializers import UserSerializer, GroupSerializer, JobSerializer
 
 from .models import Job
 
+<<<<<<< HEAD
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+
+# class GroupViewSet(viewsets.ModelViewSet):
+#     queryset = Group.objects.all()
+#     serializer_class = GroupSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+=======
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -21,6 +33,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+>>>>>>> main
 
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
