@@ -120,7 +120,7 @@ If needed, you can change the port that the server runs on:
 Ensure you are in the directory for the application
 To run the application on a server on your local network/an external server such as a Linode VPS, run the following command:
   ```
-  python manage.py runserver 0.0.0.0:8000 --setting subgen.settings.prod
+  python manage.py runserver 0.0.0.0:8000 --settings subgen.settings.prod
   ```
 You can now access the application by going to the following URL: http://<ip address of machine>:8000
 If you cannot access the application, ensure your server can accept incoming connections on port 8000.
