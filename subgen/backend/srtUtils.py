@@ -32,7 +32,7 @@ import re
 import codecs
 import time
 import math
-from .audioUtils import *
+import audioUtils
 
 
 
@@ -89,7 +89,7 @@ def writeTranscriptToSRT( transcript, sourceLangCode, srtFileName ):
 # Parameters: 
 #                 transcript - the JSON output from Amazon Transcribe
 #                 sourceLangCode - the language code for the original content (e.g. English = "EN")
-#                 targetLangCode - the language code for the translated content (e.g. Spanich = "ES")
+#                 targetLangCode - the language code for the translated content (e.g. Spanish = "ES")
 #                 srtFileName - the name of the SRT file (e.g. "mySRT.SRT")
 # ==================================================================================
 def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileName, region ):
@@ -112,7 +112,7 @@ def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileNa
 #          we will need to calculate the start and end-time for each phrase
 # Parameters: 
 #                 translation - the JSON output from Amazon Translate
-#                 targetLangCode - the language code for the translated content (e.g. Spanich = "ES")
+#                 targetLangCode - the language code for the translated content (e.g. Spanish = "ES")
 # ==================================================================================	
 def getPhrasesFromTranslation( translation, targetLangCode ):
 
@@ -242,7 +242,7 @@ def getPhrasesFromTranscript( transcript ):
 # Parameters: 
 #                 transcript - the JSON output from Amazon Transcribe
 #                 sourceLangCode - the language code for the original content (e.g. English = "EN")
-#                 targetLangCode - the language code for the translated content (e.g. Spanich = "ES")
+#                 targetLangCode - the language code for the translated content (e.g. Spanish = "ES")
 #                 region - the AWS region in which to run the Translation (e.g. "us-east-1")
 # ==================================================================================
 def translateTranscript( transcript, sourceLangCode, targetLangCode, region ):
