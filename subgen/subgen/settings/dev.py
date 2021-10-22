@@ -41,12 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'backend.apps.BackendConfig',
     'rest_framework',
-<<<<<<< HEAD
     'django_crontab',
     'corsheaders',
     'user'
-=======
->>>>>>> main
 ]
 SITE_ID = 1
 MIDDLEWARE = [
