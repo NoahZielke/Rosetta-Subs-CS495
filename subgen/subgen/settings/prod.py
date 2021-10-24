@@ -22,7 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 secret_key_file = open('/home/django/secret_key.txt')
 SECRET_KEY = secret_key_file.readlines()[0]
-
+emailPasswordFile = open('/home/django/emailCreds.txt')
+EMAIL_PASSWORD = emailPasswordFile.readlines[0]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
