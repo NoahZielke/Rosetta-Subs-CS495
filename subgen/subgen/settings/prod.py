@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 secret_key_file = open('/home/django/secret_key.txt')
 SECRET_KEY = secret_key_file.readlines()[0]
 emailPasswordFile = open('/home/django/emailCreds.txt')
-EMAIL_PASSWORD = emailPasswordFile.readlines[0]
+EMAIL_PASSWORD = emailPasswordFile.readlines()[0]
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '66.228.52.5', 'subgen.lselkins.com', 'localhost']
 
