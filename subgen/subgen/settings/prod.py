@@ -146,3 +146,6 @@ JWT_AUTH = {
     # allow refreshing of tokens
     'JWT_ALLOW_REFRESH': True,
 }
+CRONJOBS = [
+    ('0 0 * * *', 'testing.test_srtUtils.runTests')
+]

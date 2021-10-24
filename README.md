@@ -61,6 +61,8 @@ We must change some settings in the dev.py and prod.py settings to ensure that y
     5. Remove the CORS_ALLOW_ALL_ORIGINS line and add CORS_ALLOWED_ORIGINS that contains a list of any domains or IP addresses that might send POST requests to this server, specifically where your React frontend is hosted.
 - In subgen/backend/utils.py
     1. Change any mention of ``` sender_email ``` to be that of the email address you will use to send notifications to users
+- In testing/test_srtUtils.py
+    1. In the ``` runTests ``` function, change the receiver_email to be that of the one who needs to be informed that a test failed. This function can also be adjusted to automatically make a jira issue upon a test failure
 - Make an empty folder called uploads in the subgen/media folder. This is excluded from the repo by default as all files within this directory are ignored.
 
 
