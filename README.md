@@ -33,9 +33,11 @@ After creating and entering a project directory with `mkdir myDirectoryName`, `c
   source venv/bin/activate
   ```
 ## The latest version of Django (3.2.6)
-Now that your virtualenv is active, we will install the python library requirements for this project via this comman:
+Now that your virtualenv is active, we will install the python library requirements for this project via these commands:
   ```
   python -m pip install -r requirements.txt
+  cd Subtitle-Generator-cs495/subgen/English-to-IPA
+  pip install .
   ```
 This will install django within your virtual environment. From here, we will prepare the application for deployment. To begin, cd into the project directory:
 
