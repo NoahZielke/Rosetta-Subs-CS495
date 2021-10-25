@@ -289,3 +289,35 @@ def updateVocabFile(user, words):
         else:
             time.sleep(10)
 
+
+#Function to retrieve vocabulary for displaying
+#args --
+#   user - username for retrieval
+def getVocab(user):
+    currUser = User.object.filter(name=user)
+    if currUser.vocab == false:
+        print("User does not have a vocabulary file. Please create one\n")
+        return
+    s3 = boto3.client('s3')
+    fileUri = "vocab/" + user + ".txt"
+    filename = user + ".txt"
+    try:
+        s3.Bucket('subgenstoragebucket').download_file(fileUri, str(settings.BASE_DIR)+'/media/temp/'+ filename)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Vocab file could not be found")
+        else:
+            raise
+
+    fileLoc = str(settings.BASE_DIR) + "/media/temp/" + filename
+    f = open(fileLoc, "r")
+    lines = f.readlines()
+    vocabWords = ""
+
+    for line in lines:
+        chunks = line.split("\t")
+        vocabWords = vocabWords + ", " + chunks[3]
+
+    print(vocabWords)
+    os.remove(filename)
+
