@@ -12,6 +12,7 @@ from pathlib import Path
 import moviepy.editor as mp
 from .srtUtils import *
 import eng_to_ipa as ipa
+import time
 
 def pullJSONGenSRTCompleted(jobName):
     s3 = boto3.resource('s3')
@@ -189,12 +190,16 @@ def genVocabFile(user, words):
     f = open(filename, "w+")
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
     for word in words:
-        if ipa.isin_cmu(word):
-            ipaWord = ipa.convert(word)
-        else:
+        formWord = word.translate(str.maketrans('','',str.punctuation))
+        convWord = ipa.convert(text=formWord, stress_marks="none")
+        if '*' in ipaWord:
+            print("ERROR: Unable to translate word: " + word + " to IPA for vocabulary creation\n")
             ipaWord = ""
+        else:
+            ipaWord = " ".join(convWord.replace(" ", ""))
+            ipaWord = ipaWord.strip()
         dashedWord = word.replace(' ', '-')
-        newLine = dashedWord + "\t" + ipaWord + "\t\t" + word + "\r\n"
+        newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
 
@@ -211,8 +216,19 @@ def genVocabFile(user, words):
             LanguageCode='en-US',
             VocabularyFileUri=uriLoc
     )
+    
+    while True:
+        status = transcribe.get_vocabulary(VocabularyName=user)
+        if status['VocabularyState'] in ['READY']:
+            print("Vocabulary successfully created\n")
+            break
+        elif status['VocabularyState'] in['FAILED']:
+            print("Vocabulary could not be created, failure reason: \n \t")
+            print(status['FailureReason']  + "\n")
+            break
+        else:
+            time.sleep(10)
 
     #Update user model to indicate vocabulary exists for user
     #currUser = User.objects.filter(name=user)
-    #currUser.vocab = true
 

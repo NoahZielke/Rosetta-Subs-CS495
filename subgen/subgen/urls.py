@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include(routes.urls)),
     path('completed_job/', views.completed_job, name='completed_job'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('vocab/', views.input_vocabulary, name='genVocab'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
