@@ -232,3 +232,60 @@ def genVocabFile(user, words):
     #Update user model to indicate vocabulary exists for user
     #currUser = User.objects.filter(name=user)
 
+#Function to update text file for vocab and upload to s3
+#args --
+#   user - username for vocab file
+#   words - array of words/phrases/acronym
+def updateVocabFile(user, words):
+    s3 = boto3.client('s3')
+    downloadFileName = user + ".txt"
+    try:
+        s3.Bucket('subgenstoragebucket').download_file('vocab/'+downloadFileName, str(settings.BASE_DIR)+'/media/temp/'+filename)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Vocab file could not be found")
+        else:
+            raise
+    
+    filename = str(settings.BASE_DIR) + "/media/temp/" + user + ".txt"
+    f = open(filename, "w+")
+    for word in words:
+        formWord = word.translate(str.maketrans('','',str.punctuation))
+        convWord = ipa.convert(text=formWord, stress_marks="none")
+        if '*' in ipaWord:
+            print("ERROR: Unable to translate word: " + word + " to IPA for vocabulary creation\n")
+            ipaWord = ""
+        else:
+            ipaWord = " ".join(convWord.replace(" ", ""))
+            ipaWord = ipaWord.strip()
+        dashedWord = word.replace(' ', '-')
+        newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
+        f.write(newLine)
+    f.close()
+
+    s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
+
+    data = open(filename, 'rb')
+    s3.Bucket('subgenstoragebucket').put_object(Key='vocab/'+downloadFileName, Body=data)
+    os.remove(filename)
+
+    transcribe = boto3.client('transcribe')
+    uriLoc = "s3://subgenstoragebucket/vocab/" + downloadFileName
+    transcribe.update_vocabulary(
+            VocabularyName=user,
+            LanguageCode='en-US',
+            VocabularyFileUri=uriLoc
+    )
+
+    while True:
+        status = transcribe.get_vocabulary(VocabularyName=user)
+        if status['VocabularyState'] in ['READY']:
+            print("Vocabulary successfully created\n")
+            break
+        elif status['VocabularyState'] in['FAILED']:
+            print("Vocabulary could not be created, failure reason: \n \t")
+            print(status['FailureReason']  + "\n")
+            break
+        else:
+            time.sleep(10)
+
