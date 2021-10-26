@@ -48,7 +48,10 @@
     ]
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@types/bootstrap": "^5.1.6",
+=======
+>>>>>>> origin/main
     "@types/react-router-dom": "^5.1.9",
     "@types/validator": "^13.6.3"
   }
