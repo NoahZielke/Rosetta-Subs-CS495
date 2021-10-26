@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { AnyARecord } from "dns";
 import React, { useState } from "react";
 import {
   Alert,
@@ -8,8 +7,9 @@ import {
   FormControl,
   InputGroup,
   Modal,
+  Spinner
 } from "react-bootstrap";
-import validator from 'validator';
+import validator from "validator";
 
 const EmailModal: React.FC<{
   show: boolean;
@@ -21,30 +21,30 @@ const EmailModal: React.FC<{
   const [alert, setAlert] = useState<React.ReactElement<AlertProps> | null>(
     null
   );
+  const [buttonState, setButtonState] = useState(true);
 
-  const [emailError, setEmailError] = useState('')
-  const validateEmail = (e:any) => {
-    var email = e.target.value
-  
-    if ((validator.isEmail(email)) || (email === '')) {
-      setEmailError('')
+  const [emailError, setEmailError] = useState("");
+  const validateEmail = (e: any) => {
+    var email = e.target.value;
+
+    if (validator.isEmail(email) || email === "") {
+      setEmailError("");
     } else {
-      setEmailError('Please enter a valid email')
+      setEmailError("Please enter a valid email");
     }
-  }
+  };
 
-  const [buttonState, setButtonState] = useState(true)
-  const submitButtonState = (e?:any) => {
-    var email = e.target.value
-  
-    if ((validator.isEmail(email)) && (uploading === false)) {
-      setButtonState(false) //button is enabled 
+  const submitButtonState = (e?: any) => {
+    var email = e.target.value;
+
+    if (validator.isEmail(email) && uploading === false) {
+      setButtonState(false); //button is enabled
     } else {
-      setButtonState(true)  //button is disabled
+      setButtonState(true); //button is disabled
     }
-  }
+  };
 
-  const submitForm = () => {
+  const submitForm = async () => {
     setAlert(null);
     setUploading(true);
 
@@ -53,8 +53,24 @@ const EmailModal: React.FC<{
     formData.append("filename", file.name);
     formData.append("file", file);
 
-    console.log("submit", file);
-    console.log("email", email);
+    setAlert(
+      <Alert
+        variant='info'
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}>
+        <text className='pr-3'> Transcribing... </text>{" "}
+        <Spinner
+          animation='border'
+          role='status'
+          style={{
+            position: "absolute",
+            right: 12,
+          }}
+        />{" "}
+      </Alert>
+    );
     axios({
       method: "POST",
       headers: {
@@ -62,14 +78,17 @@ const EmailModal: React.FC<{
       },
       data: formData,
       url: "https://subgen.lselkins.com/jobs/",
+      // url: "https://thisdoesnotexist/",
       // onUploadProgress: (ev: ProgressEvent) => {
       //   const progress = (ev.loaded / ev.total) * 100;
       //   updateUploadProgress(Math.round(progress));
       // },
     })
-      .then((resp: AxiosResponse<any>) => {
+      .then(async (resp: AxiosResponse<any>) => {
         console.log(resp);
         setAlert(<Alert variant='success'>Job Complete!</Alert>);
+
+        await new Promise((r) => setTimeout(r, 2000));
         handleClose();
       })
       .catch((err: Error) => {
@@ -91,16 +110,25 @@ const EmailModal: React.FC<{
           {" "}
           <FormControl
             placeholder='Email'
-            onChange={(e) => {setEmail(e.target.value); validateEmail(e); submitButtonState(e)}}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              validateEmail(e);
+              submitButtonState(e);
+            }}
           />
         </InputGroup>
-        <p className="text-center pt-3" style={{color: "rgb(214, 52, 52)"}}>{emailError}</p>
+        <p className='text-center pt-3' style={{ color: "rgb(214, 52, 52)" }}>
+          {emailError}
+        </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant='secondary' onClick={handleClose}>
           Close
         </Button>
-        <Button variant='primary' onClick={submitForm} disabled={buttonState}>
+        <Button
+          variant='primary'
+          onClick={submitForm}
+          disabled={uploading || buttonState}>
           Submit
         </Button>
       </Modal.Footer>
