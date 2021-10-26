@@ -7,7 +7,7 @@ import {
   FormControl,
   InputGroup,
   Modal,
-  Spinner
+  Spinner,
 } from "react-bootstrap";
 import validator from "validator";
 
