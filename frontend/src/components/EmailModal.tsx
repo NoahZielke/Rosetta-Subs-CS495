@@ -10,7 +10,6 @@ import {
   Spinner,
 } from "react-bootstrap";
 import validator from "validator";
-import { sleep } from "../utils";
 
 const EmailModal: React.FC<{
   show: boolean;
@@ -54,8 +53,6 @@ const EmailModal: React.FC<{
     formData.append("filename", file.name);
     formData.append("file", file);
 
-    console.log("submit", file);
-    console.log("email", email);
     setAlert(
       <Alert
         variant='info'

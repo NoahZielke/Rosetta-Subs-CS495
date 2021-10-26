@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { FileList } from "./FileList";
 import TranscriptionJob from "./TranscriptionJob";
-
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
   height,
@@ -39,87 +39,116 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
       <div
         className='row px-5 justify-content-center'
         style={{
-          padding: "70px 0",
+          paddingTop: "70px",
           alignItems: "center",
           justifyContent: "center",
         }}>
-        <div className='col-12 row main-module px-4'>
-          <div
+        {/* <div className='col-12 row main-module px-4'> */}
+        {/* <div
             className='col-4'
             style={{
               boxShadow: "0px 0px 5px #888888",
               clipPath: "inset(0px -5px 0px 0px)",
-            }}>
-            <div
-              {...getRootProps()}
-              className=' d-flex flex-column justify-content-center align-items-center p-4'>
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <CloudUploadSVG width='128' height='128' />
-              ) : (
-                <CloudUploadSVG width='128' height='128' />
-              )}
+            }}> */}
+        <div
+          {...getRootProps()}
+          className=' d-flex flex-column justify-content-center align-items-center p-4'>
+          <h4>Upload a Video or Audio File to Begin</h4>
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <CloudUploadSVG width='256' height='256' />
+          ) : (
+            <CloudUploadSVG width='256' height='256' />
+          )}
 
-              <input {...getInputProps()} />
+          <input {...getInputProps()} />
 
-              <button type='button' className='btn btn-primary'>
-                Transcribe File
-              </button>
-            </div>
-          </div>
-          <div className='col-8'>
-            <ol
-              className='py-4'
-              style={{
-                fontSize: "larger",
-                listStyle: "inside",
-                textAlign: "left",
-              }}>
-              <li>Simply upload your video file, and press "Start"</li>
-              <li>
-                Select such and such options if you want such and such features
-              </li>
-              <li>
-                Some of these instructions will change as get further along in
-                the project
-              </li>
-            </ol>
-          </div>
+          <button type='button' className='btn btn-primary'>
+            Transcribe File
+          </button>
         </div>
       </div>
+      <p
+        className='text-center pt-3 text-primary btn-link mb-0'
+        style={{ cursor: "pointer" }}>
+        For additional instructions click here.
+      </p>
+      {/* </div>
+      </div> */}
     </div>
   );
 };
 
-const FileList: React.FC<{ files: File[] }> = ({ files }) => {
-  return (
-    <>
-      {files.map((file) => (
-        <div className='row' key={file.name}>
-          <ol>
-            <li>
-              <h6>{file.name}</h6>- {file.size / 1000000} MB
-            </li>
-          </ol>
-        </div>
-      ))}
-    </>
-  );
-};
-
+const Check = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='40'
+    height='40'
+    fill='currentColor'
+    className='bi bi-check2 text-success ml-2'
+    viewBox='0 0 16 16'>
+    <path d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z' />
+  </svg>
+);
 export const FileUpload: React.FC = (props) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [complete, setComplete] = useState(false);
+  const [selected, setSelected] = useState({});
+  const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
 
+  const handleUploadFinished = () => {
+    setFiles([]);
+    setComplete(true);
+  };
+  useEffect(() => {
+    const getSelectedFiles = () => {
+      const selectedFiles = [];
+      for (let [key, isSelected] of Object.entries(selected)) {
+        if (isSelected) selectedFiles.push(files[parseInt(key)]);
+      }
+      setFilesToUpload(selectedFiles);
+    };
+    getSelectedFiles();
+  }, [files, selected]);
+
+  if (complete) {
+    return (
+      <>
+        <UploadDropzone
+          setFiles={(file) => {
+            setComplete(false);
+            setFiles(file);
+          }}
+        />
+        <div className='p-4'>
+          <div style={{ display: "flex", alignItems: "center", height: 80 }}>
+            <h4 style={{ marginBottom: 0 }}>Upload Success</h4>
+            <Check />
+          </div>
+          <h5 style={{ marginBottom: 0 }}>
+            You will receive an email when your transcription has completed.
+          </h5>
+        </div>
+      </>
+    );
+  }
   if (files.length) {
     return (
       <>
         <UploadDropzone setFiles={(file) => setFiles(file)} />
-        <div className='pt-4'>
-          <>
-            <h4>Processing Files</h4>
-            <FileList files={files} />
-            <TranscriptionJob file={files[0]} />
-          </>
+        <div className='p-4'>
+          <div style={{ display: "flex", alignItems: "center", height: 80 }}>
+            <h4 style={{ marginBottom: 0 }}>Select Files to Proceed</h4>
+            <TranscriptionJob
+              files={filesToUpload}
+              handleUploadComplete={() => handleUploadFinished()}
+            />
+          </div>
+          <FileList
+            files={files}
+            setSelected={(newState: any) => setSelected(newState)}
+            selected={selected}
+          />
         </div>
       </>
     );
@@ -128,9 +157,7 @@ export const FileUpload: React.FC = (props) => {
   return (
     <>
       <UploadDropzone setFiles={(files) => setFiles(files)} />
-      <div className='pt-4'>
-        <h4>Upload a File to Begin</h4>
-      </div>
+      <div className='m-4'></div>
     </>
   );
 };

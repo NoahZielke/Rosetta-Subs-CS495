@@ -41,6 +41,11 @@ code {
   color: rgb(100, 196, 100) !important;
 }
 
+#active-nav-dropdown {
+  color: rgb(100, 196, 100) !important;
+
+}
+
 .main-module {
   margin: auto;
   background-color: #ffffff;

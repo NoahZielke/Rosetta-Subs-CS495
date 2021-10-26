@@ -1,4 +1,4 @@
-import teamLogo from "../images/app-logo-75px.png";
+import { MyNavbar } from "../components/Navbar";
 import noah from "../images/noah-profile.jpg";
 import puffin from "../images/puffin.jpg";
 
@@ -14,41 +14,8 @@ const TeamBios = () => {
   }
   return (
     <div>
-      <div>
-        <nav className='navbar navbar-expand-md'>
-          <a className='navbar-brand ps-3' href='/home'>
-            <img src={teamLogo} alt='Translation app logo' />{" "}
-          </a>
-          <a className='navbar-brand app-name' href='/home'>
-            Rosetta-Subs
-          </a>
-          <button
-            className='navbar-toggler navbar-light'
-            data-toggle='collapse'
-            data-target='#collapse_target'>
-            <span className='navbar-toggler-icon'></span>
-          </button>
-          {/* Image source: https://www.flaticon.com/free-icon/translation_2793580 */}
-          <div className='collapse navbar-collapse' id='collapse_target'>
-            <ul className='navbar-nav ms-auto'>
-              <li className='nav-item px-2'>
-                <a className='nav-link navbar-item' href='/home'>
-                  Home
-                </a>
-              </li>
-              <li className='nav-item px-2'>
-                <a className='nav-link navbar-item' href='/app-home'>
-                  Web App
-                </a>
-              </li>
-              <li className='nav-item ps-2 pe-4 active'>
-                <a className='nav-link navbar-item' href='/team-bios'>
-                  Team Member Bios
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+      <div style={{ marginBottom: 50 }}>
+        <MyNavbar active='team member bios' />
       </div>
 
       <div className='row justify-content-center' style={{ padding: "70px 0" }}>
