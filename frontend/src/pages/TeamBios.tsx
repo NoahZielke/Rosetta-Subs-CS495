@@ -80,6 +80,39 @@ const TeamBios = () => {
         <div className='row justify-content-center' style={{ padding: "15px 0" }}>
           <div className='col-10 row main-module pl-0'>
             <img
+              src={puffin}
+              alt='Parker Hopson'
+              className='d-none d-lg-block col-lg-4 pl-0'
+              style={{ borderRadius: "10px" }}
+            />
+            <div className='col-lg-8 col-12'>
+              <h3 className='pt-4'>Parker Hopson</h3>
+              <p className='pt-3 px-2 biography-module-text'>
+                I am a senior at the University of Alabama, expecting to graduate in December with a B.S. in Computer Science, Minor in Mathematics. I have experience in multiple facets of IT, from triage to basic server maintenance, from my time at Alabama Public Radio and WVUA23 News station.
+              </p>
+              <p className='px-2 biography-module-text'>
+                I also gained experience in project management during my time at Profill Solutions. Other than technology, my interests include exercising, watching movies, and listening to a variety of music.
+              </p>
+              <div className='pb-4 pt-2'>
+                <button
+                  onClick={() => showHideContact("pzhopson@crimson.ua.edu", 2)}
+                  className='btn btn-primary py-2'>
+                  Click to Show Contact Info
+                </button>
+                <p
+                  id='contact-info-2'
+                  className='pt-2 main-module-text'
+                  style={{ display: "none" }}></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container-fluid">
+        <div className='row justify-content-center' style={{ padding: "70px 0" }}>
+          <div className='col-10 row main-module pl-0'>
+            <img
               src={noah}
               alt='Noah Zielke'
               className='d-none d-lg-block col-lg-4 pl-0'
@@ -102,12 +135,12 @@ const TeamBios = () => {
               </p>
               <div className='pb-4 pt-2'>
                 <button
-                  onClick={() => showHideContact("noahsamuelzielke@gmail.com", 2)}
+                  onClick={() => showHideContact("noahsamuelzielke@gmail.com", 3)}
                   className='btn btn-primary py-2'>
                   Click to Show Contact Info
                 </button>
                 <p
-                  id='contact-info-2'
+                  id='contact-info-3'
                   className='pt-2 main-module-text'
                   style={{ display: "none" }}></p>
               </div>
@@ -117,7 +150,7 @@ const TeamBios = () => {
       </div>
 
       <div className="container-fluid">
-        <div className='row justify-content-center' style={{ padding: "70px 0" }}>
+        <div className='row justify-content-center' style={{ padding: "15px 0" }}>
           <div className='col-10 row main-module pl-0'>
             <img
               src={puffin}
@@ -134,12 +167,12 @@ const TeamBios = () => {
               </p>
               <div className='pb-4 pt-2'>
                 <button
-                  onClick={() => showHideContact("crmilsap@crimson.ua.edu", 3)}
+                  onClick={() => showHideContact("crmilsap@crimson.ua.edu", 4)}
                   className='btn btn-primary py-2'>
                   Click to Show Contact Info
                 </button>
                 <p
-                  id='contact-info-3'
+                  id='contact-info-4'
                   className='pt-2 main-module-text'
                   style={{ display: "none" }}></p>
               </div>
