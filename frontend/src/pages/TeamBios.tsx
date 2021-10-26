@@ -18,75 +18,73 @@ const TeamBios = () => {
         <MyNavbar active='team member bios' />
       </div>
 
-      <div className='row justify-content-center' style={{ padding: "70px 0" }}>
-        <div className='col-10 row main-module ps-0'>
-          <img
-            src={puffin}
-            alt='Logan Elkins'
-            className='col-4 ps-0'
-            style={{ borderRadius: "10px" }}
-          />
-          <div className='col-8'>
-            <h3 className='pt-4'>Logan Elkins</h3>
-            <p className='pt-4 px-2 biography-module-text'>
-              I am a senior at the University of Alabama graduating with a BS in
-              Computer Science in December 2021. Throughout my internship at
-              Synopsys, Inc., I have had the opportunity to specialize in Data
-              Analytics via Python and Data Visualization in Tableau.
-            </p>
-            <p className='pt-2 px-2 biography-module-text'>
-              I have two dogs, an American Staffordshire and a Pointer/Lab mix,
-              both of whom are rescues. I enjoy playing video games and going
-              hiking in my free time.
-            </p>
-            <div className='pb-4 pt-2'>
-              <button
-                onClick={() => showHideContact("lselkins@crimson.ua.edu", 1)}
-                className='btn btn-primary py-2'>
-                Click to Show Contact Info
-              </button>
-              <p
-                id='contact-info-1'
-                className='pt-2 main-module-text'
-                style={{ display: "none" }}></p>
+      <div className="container-fluid">
+        <div className='row justify-content-center' style={{ padding: "15px 0" }}>
+          <div className='col-10 row main-module pl-0'>
+            <img
+              src={noah}
+              alt='Noah Zielke'
+              className='d-none d-lg-block col-lg-4 pl-0'
+              style={{ borderRadius: "10px" }}
+            />
+            <div className='col-lg-8 col-12'>
+              <h3 className='pt-4'>Noah Samuel Zielke</h3>
+              <p className='pt-3 px-2 biography-module-text'>
+                I have experience working with Ansible playbooks, basic C and C++,
+                ROBOT Framework, Python, HTML/CSS, and very small amounts of
+                Javascript. I also have some experience working with Openstack and
+                Jenkins from my time as a Co-op at Adtran, where I worked on their
+                device management software called the Mosaic Cloud Platform.
+              </p>
+              <p className='px-2 biography-module-text'>
+                I especially enjoy web design and automation work. Away from the
+                computer, I enjoy hiking, biking, camping, studying Spanish, and
+                playing basketball. Puedes me contactar para hablar en Espanol en
+                cualquier momento!!!
+              </p>
+              <div className='pb-4 pt-2'>
+                <button
+                  onClick={() => showHideContact("noahsamuelzielke@gmail.com", 2)}
+                  className='btn btn-primary py-2'>
+                  Click to Show Contact Info
+                </button>
+                <p
+                  id='contact-info-2'
+                  className='pt-2 main-module-text'
+                  style={{ display: "none" }}></p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className='row justify-content-center' style={{ padding: "15px 0" }}>
-        <div className='col-10 row main-module ps-0'>
-          <img
-            src={noah}
-            alt='Noah Zielke'
-            className='col-4 ps-0'
-            style={{ borderRadius: "10px" }}
-          />
-          <div className='col-8'>
-            <h3 className='pt-4'>Noah Samuel Zielke</h3>
-            <p className='pt-4 px-2 biography-module-text'>
-              I have experience working with Ansible playbooks, basic C and C++,
-              ROBOT Framework, Python, HTML/CSS, and very small amounts of
-              Javascript. I also have some experience working with Openstack and
-              Jenkins from my time as a Co-op at Adtran, where I worked on their
-              device management software called the Mosaic Cloud Platform.
-            </p>
-            <p className='pt-2 px-2 biography-module-text'>
-              I especially enjoy web design and automation work. Away from the
-              computer, I enjoy hiking, biking, camping, studying Spanish, and
-              playing basketball. Puedes me contactar para hablar en Espanol en
-              cualquier momento!!!
-            </p>
-            <div className='pb-4 pt-2'>
-              <button
-                onClick={() => showHideContact("noahsamuelzielke@gmail.com", 2)}
-                className='btn btn-primary py-2'>
-                Click to Show Contact Info
-              </button>
-              <p
-                id='contact-info-2'
-                className='pt-2 main-module-text'
-                style={{ display: "none" }}></p>
+      <div className="container-fluid">
+        <div className='row justify-content-center' style={{ padding: "70px 0" }}>
+          <div className='col-10 row main-module pl-0'>
+            <img
+              src={puffin}
+              alt='Cory Milsap'
+              className='d-none d-lg-block col-lg-4 pl-0'
+              style={{ borderRadius: "10px" }}
+            />
+            <div className='col-lg-8 col-12'>
+              <h3 className='pt-4'>Cory Milsap</h3>
+              <p className='pt-3 px-2 biography-module-text'>
+                I am graduating December 2021 with a B.S in Computer Science. I
+                plan to return to Goldman Sachs as a Financial Engineer. Interests
+                include blockchain, football, and reading.
+              </p>
+              <div className='pb-4 pt-2'>
+                <button
+                  onClick={() => showHideContact("crmilsap@crimson.ua.edu", 3)}
+                  className='btn btn-primary py-2'>
+                  Click to Show Contact Info
+                </button>
+                <p
+                  id='contact-info-3'
+                  className='pt-2 main-module-text'
+                  style={{ display: "none" }}></p>
+              </div>
             </div>
           </div>
         </div>
@@ -94,7 +92,7 @@ const TeamBios = () => {
 
       <footer></footer>
       <div className='py-2 px-3 attribution'>
-        Icons made by{" "}
+        App logo made by{" "}
         <a href='https://www.freepik.com' title='Freepik'>
           Freepik
         </a>{" "}

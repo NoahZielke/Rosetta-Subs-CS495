@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['66.228.52.5', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'backend.apps.BackendConfig',
     'rest_framework',
+    'django_crontab',
+    'corsheaders',
+    'user'
 ]
 SITE_ID = 1
 MIDDLEWARE = [
@@ -104,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+AUTH_USER_MODEL = 'user.User'
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -130,3 +132,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
+JWT_AUTH = {
+    # how long the original token is valid for
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+
+    # allow refreshing of tokens
+    'JWT_ALLOW_REFRESH': True,
+}

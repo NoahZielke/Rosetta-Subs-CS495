@@ -4,3 +4,4 @@ subgen/media/uploads/*
 
 # Local Netlify folder
 .netlify
+emailCreds.txt

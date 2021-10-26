@@ -35,7 +35,7 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
   });
 
   return (
-    <div>
+    <div className="container-fluid">
       <div
         className='row px-5 justify-content-center'
         style={{
