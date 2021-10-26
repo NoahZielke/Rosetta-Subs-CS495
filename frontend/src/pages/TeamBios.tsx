@@ -1,6 +1,7 @@
 import Navbar from 'react-bootstrap/Navbar'
 import { Container, Nav } from "react-bootstrap";
 import teamLogo from "../images/app-logo-75px.png";
+import logan from "../images/logan-profile.jpg";
 import noah from "../images/noah-profile.jpg";
 import puffin from "../images/puffin.jpg";
 
@@ -41,7 +42,7 @@ const TeamBios = () => {
         <div className='row justify-content-center' style={{ padding: "70px 0" }}>
           <div className='col-10 row main-module pl-0'>
             <img
-              src={puffin}
+              src={logan}
               alt='Logan Elkins'
               className='d-none d-lg-block col-lg-4 pl-0'
               style={{ borderRadius: "10px" }}
