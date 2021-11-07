@@ -5,7 +5,7 @@ import { MyNavbar } from "../components/Navbar";
 const AppHome = () => {
   return (
     <div style={{ marginBottom: 50 }}>
-      <MyNavbar active='web app' />
+      <MyNavbar />
 
       <FileUpload />
     </div>

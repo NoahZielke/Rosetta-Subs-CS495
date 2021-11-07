@@ -10,7 +10,10 @@ const TeamBios = () => {
     var x = document.getElementById(`contact-info-${order}`)!;
     if (x.style.display === "none") {
       x.style.display = "block";
-      x.innerHTML = `email: ${email}`;
+      x.style.textAlign = "center";
+      x.style.display = "inline";
+      x.classList.add('px-3');
+      x.innerHTML = `${email}`;
     } else {
       x.style.display = "none";
     }
