@@ -80,8 +80,8 @@ def translate_transcript(request):
             getAudioTranscript(translation, targetLanguage, mp3OutFile)
             zipFileOutFilePath = str(settings.BASE_DIR) + '/media/temp/' + filename + '_' + targetLanguage + '.zip'
             zipFile = ZipFile(zipFileOutFilePath, 'w')
-            zipFile.write(srtOutFile)
-            zipFile.write(mp3OutFile)
+            zipFile.write(srtOutFile, filename + '_' + targetLanguage + '.srt')
+            zipFile.write(mp3OutFile, filename + '_' + targetLanguage + '.mp3')
             zipFile.close()
             return FileResponse(open(zipFileOutFilePath, 'rb'))
         html = "<html><body>translating file {} <br></body></html>".format(file.name)

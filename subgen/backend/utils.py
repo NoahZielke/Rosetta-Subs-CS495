@@ -196,8 +196,6 @@ def transcribeNewUploads():
 # args --
 #   user - username for vocab file
 #   words - array of words/phrases/acronym
-
-
 def genVocabFile(user, words):
     filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
     f = open(filename, "w+")
