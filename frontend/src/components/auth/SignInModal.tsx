@@ -19,7 +19,7 @@ const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
         width: 20,
         height: 20,
         position: "absolute",
-        right: 16,
+        right: 24,
         top: 0,
         fontSize: 30,
         cursor: "pointer",

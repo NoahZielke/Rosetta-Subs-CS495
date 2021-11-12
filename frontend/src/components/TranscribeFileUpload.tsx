@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FileList } from "./FileList";
 import TranscriptionJob from "./TranscriptionJob";
+
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
   height,
@@ -43,13 +44,6 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
           alignItems: "center",
           justifyContent: "center",
         }}>
-        {/* <div className='col-12 row main-module px-4'> */}
-        {/* <div
-            className='col-4'
-            style={{
-              boxShadow: "0px 0px 5px #888888",
-              clipPath: "inset(0px -5px 0px 0px)",
-            }}> */}
         <div
           {...getRootProps()}
           className=' d-flex flex-column justify-content-center align-items-center p-4'>
@@ -90,7 +84,7 @@ const Check = () => (
     <path d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z' />
   </svg>
 );
-export const FileUpload: React.FC = (props) => {
+export const TranscribeFileUpload: React.FC = (props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [complete, setComplete] = useState(false);
   const [selected, setSelected] = useState({});
