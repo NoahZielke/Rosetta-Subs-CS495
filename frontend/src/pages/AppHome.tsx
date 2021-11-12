@@ -1,13 +1,13 @@
-import React from "react";
-import { FileUpload } from "../components/FileUpload";
-import { MyNavbar } from "../components/Navbar";
+import { ToolMenu } from "../components/ToolMenu";
+import { AuthNavbar } from "../components/AuthNavbar";
 
 const AppHome = () => {
   return (
-    <div style={{ marginBottom: 50 }}>
-      <MyNavbar />
+    <div>
+      {/* Remove navbar with sign-in/authentication until sign-in is persistent site-wide */}
+      <AuthNavbar /> 
 
-      <FileUpload />
+      <ToolMenu />
     </div>
   );
 };

@@ -1,9 +1,8 @@
-import Navbar from 'react-bootstrap/Navbar'
-import { Container, Nav } from "react-bootstrap";
-import teamLogo from "../images/app-logo-75px.png";
+import { NonAuthNavbar } from "../components/NonAuthNavbar";
 import logan from "../images/logan-profile.jpg";
 import noah from "../images/noah-profile.jpg";
 import puffin from "../images/puffin.jpg";
+
 
 const TeamBios = () => {
   function showHideContact(email: string, order: number) {
@@ -20,26 +19,7 @@ const TeamBios = () => {
   }
   return (
     <div>
-      <Navbar expand="lg">
-        <Container fluid>
-          <Navbar.Brand href="/home"><img src={teamLogo} alt='Translation app logo' />{" "}
-            {/* Image source: https://www.flaticon.com/free-icon/translation_2793580 */}
-          </Navbar.Brand>
-          <Navbar.Brand href="/home">
-            <a className='navbar-brand app-name' href='/home'>
-              Rosetta-Subs
-            </a>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link className="navbar-item px-3" href="/home">Home</Nav.Link>
-              <Nav.Link className="navbar-item px-3" href="/app-home">Web App</Nav.Link>
-              <Nav.Link className="navbar-item active pl-3 pr-4" href="/team-bios">Team Member Bios</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <NonAuthNavbar active="team-bios" />
 
       <div className="container-fluid">
         <div className='row justify-content-center' style={{ padding: "70px 0" }}>

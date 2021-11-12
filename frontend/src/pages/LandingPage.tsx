@@ -1,30 +1,9 @@
-import teamLogo from "../images/app-logo-75px.png";
-import Navbar from 'react-bootstrap/Navbar'
-import { Container, Nav} from "react-bootstrap";
+import { NonAuthNavbar } from "../components/NonAuthNavbar";
 
 const LandingPage = () => {
   return (
     <div>
-      <Navbar expand="lg" className="mr-0 ml-0">
-        <Container fluid>
-          <Navbar.Brand href="/home"><img src={teamLogo} alt='Translation app logo' />{" "}
-            {/* Image source: https://www.flaticon.com/free-icon/translation_2793580 */}
-          </Navbar.Brand>
-          <Navbar.Brand href="/home">
-            <a className='navbar-brand app-name' href='/home'>
-              Rosetta-Subs
-            </a>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link className="navbar-item active px-3" href="/home">Home</Nav.Link>
-              <Nav.Link className="navbar-item px-3" href="/app-home">Web App</Nav.Link>
-              <Nav.Link className="navbar-item pl-3 pr-4" href="/team-bios">Team Member Bios</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <NonAuthNavbar active='home'/>
 
       <div className="pb-5"></div>
 
@@ -129,7 +108,7 @@ const LandingPage = () => {
                 href='https://alabama.app.box.com/folder/146606344889'
                 target='_blank'
                 rel='noreferrer'
-                className='btn btn-danger'>
+                className='btn btn-secondary'>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   width="16" 
@@ -148,7 +127,7 @@ const LandingPage = () => {
                 href='https://alabama.app.box.com/folder/146234329999'
                 target='_blank'
                 rel='noreferrer'
-                className='btn btn-info'>
+                className='btn btn-danger'>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   width="16" 
@@ -160,6 +139,25 @@ const LandingPage = () => {
                 </svg>
                 {/* Icon source https://icons.getbootstrap.com/icons/arrow-up-right-square/ */}
                 {"\u00A0"} Sprint 2 Deliverables
+              </a>
+            </div>
+            <div className="pb-4">
+              <a
+                href='https://alabama.app.box.com/folder/149946856697'
+                target='_blank'
+                rel='noreferrer'
+                className='btn btn-info'>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="16" 
+                  height="16" 
+                  fill="currentColor" 
+                  className="bi bi-arrow-up-right-square" 
+                  viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm5.854 8.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/>
+                </svg>
+                {/* Icon source https://icons.getbootstrap.com/icons/arrow-up-right-square/ */}
+                {"\u00A0"} Sprint 3 Deliverables
               </a>
             </div>
           </div>

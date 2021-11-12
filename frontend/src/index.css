@@ -20,6 +20,7 @@
 
 .navbar-item:hover { 
   text-decoration: underline !important;
+  cursor: pointer;
   color: rgb(33, 37, 41) !important;
 }
 
@@ -81,4 +82,24 @@ footer {
   font-size:large; 
   text-align: left;
   text-indent: 8%;
+}
+
+.tool-select-div {
+  font-size:x-large; 
+  border-bottom: 1px solid rgb(180, 180, 180);
+  text-align: center;
+}
+
+.tool-select-div a {
+  text-decoration: none;
+  color:rgb(33, 37, 41) !important;
+}
+
+.tool-select-div:hover {
+  background-color: #f1f1f1;
+}
+
+.tool-menu:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
 }
