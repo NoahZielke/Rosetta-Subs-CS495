@@ -228,3 +228,32 @@ def burnCaption(videoFile, srtFile, outputFile):
     myvideo = VideoFileClip(videoFile)
     final = mp.CompositeVideoClip([myvideo, sub.set_position(('center', 'bottom'))])
     final.write_videofile(outputFile, fps=myvideo.fps)
+
+def sendEmail(emailAddress, subject, body, file, filename):
+    sender_email = "noreply.subgen@gmail.com"
+    password = settings.EMAIL_PASSWORD
+    receiver_email = emailAddress
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message["Bcc"] = receiver_email  # Recommended for mass emails
+    message.attach(MIMEText(body, "plain"))
+
+    with open(file, "rb") as attachment:
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(attachment.read())
+    encoders.encode_base64(part)
+    part.add_header(
+        "Content-Disposition",
+        f"attachment; filename= {filename}",
+    )
+    message.attach(part)
+
+    text = message.as_string()
+    # Log in to server using secure context and send email
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, text)
+    return

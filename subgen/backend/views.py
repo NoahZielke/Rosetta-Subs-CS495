@@ -8,7 +8,7 @@ from rest_framework import status
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
-from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, burnCaption
+from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, burnCaption, sendEmail
 from .srtUtils import writeTranslationToSRT
 from .audioUtils import getAudioTranscript, overwriteAudio, getOrigAudio
 import json, datetime, shutil, os
@@ -16,17 +16,6 @@ from django.http import HttpResponse, FileResponse
 from zipfile import ZipFile
 from django.core.files.storage import FileSystemStorage
 
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-
-# class GroupViewSet(viewsets.ModelViewSet):
-#     queryset = Group.objects.all()
-#     serializer_class = GroupSerializer
-#     permission_classes = [permissions.IsAuthenticated]
 
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
@@ -85,7 +74,10 @@ def translate_transcript(request):
             zipFile.write(srtOutFile, filename + '_' + targetLanguage + '.srt')
             zipFile.write(mp3OutFile, filename + '_' + targetLanguage + '.mp3')
             zipFile.close()
-            return FileResponse(open(zipFileOutFilePath, 'rb'))
+            subject = "Download your files"
+            body = "Your translated transcript and translated audio are attached"
+            sendEmail(request.POST['emailAddress'], subject, body, zipFileOutFilePath, filename + '_' + targetLanguage + '.zip')
+            return HttpResponse("<html><body>Email sent</body></html>")
         html = "<html><body>translating file {} <br></body></html>".format(file.name)
         return FileResponse(open(srtOutFile, 'rb'))
     
