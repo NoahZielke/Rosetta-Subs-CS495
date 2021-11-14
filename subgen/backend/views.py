@@ -72,7 +72,8 @@ def translate_transcript(request):
         filename = str(file.name).split('.')[0]
         sourceLanguage = getLanguageCode(request.POST['sourceLanguage'])
         targetLanguage = getLanguageCode(request.POST['targetLanguage'])
-        translatedAudio = bool(request.POST['translatedAudio'])
+        translatedAudio = True if request.POST['translatedAudio'] == 'True' else False
+        print(translatedAudio)
         contents = file.read()
         srtOutFile = str(settings.BASE_DIR) + '/media/temp/' + filename + '_' + targetLanguage + '.srt'
         translation = writeTranslationToSRT(contents, sourceLanguage, targetLanguage, srtOutFile, 'us-east-2')
