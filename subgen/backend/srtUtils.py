@@ -32,7 +32,8 @@ import re
 import codecs
 import time
 import math
-
+import os
+from .audioUtils import getSecondsFromTranslation
 
 
 # ==================================================================================
@@ -98,9 +99,10 @@ def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileNa
 	#print( "\n\n==> Translation: " + str(translation))
 		
 	# Now create phrases from the translation
-	textToTranslate = unicode(translation["TranslatedText"])
+	textToTranslate = (translation["TranslatedText"])
 	phrases = getPhrasesFromTranslation( textToTranslate, targetLangCode )
 	writeSRT( phrases, srtFileName )
+	return textToTranslate
 	
 
 # ==================================================================================
@@ -129,7 +131,7 @@ def getPhrasesFromTranslation( translation, targetLangCode ):
 	seconds = 0
 
 	print("==> Creating phrases from translation...")
-
+	audioFilesToDelete = []
 	for word in words:
 
 		# if it is a new phrase, then get the start_time of the first item
@@ -147,6 +149,7 @@ def getPhrasesFromTranslation( translation, targetLangCode ):
 		if x == 10:
 		
 			# For Translations, we now need to calculate the end time for the phrase
+			audioFilesToDelete.append("phraseAudio" + str(c) + ".mp3")
 			psecs = getSecondsFromTranslation( getPhraseText( phrase), targetLangCode, "phraseAudio" + str(c) + ".mp3" ) 
 			seconds += psecs
 			phrase["end_time"] = getTimeCode( seconds )
@@ -164,7 +167,8 @@ def getPhrasesFromTranslation( translation, targetLangCode ):
 		# however, you may need to modify or eliminate this line depending on your content.
 		if c == 30:
 			break
-			
+	for audioFile in audioFilesToDelete:
+		os.remove(audioFile)
 	return phrases
 	
 

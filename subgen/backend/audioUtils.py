@@ -36,6 +36,7 @@ import contextlib
 from moviepy.editor import *
 from moviepy import editor
 from contextlib import closing
+from django.conf import settings
 
 # ==================================================================================
 # Function: writeAudio
@@ -123,14 +124,8 @@ def writeAudioStream( response, audioFileName ):
 #                 targetLangCode - the language code used for the target Amazon Polly output 
 # ==================================================================================
 def getVoiceId( targetLangCode ):
-
-	# Feel free to add others as desired
-	if targetLangCode == "es":
-		voiceId = "Penelope"
-	elif targetLangCode == "de":
-		voiceId = "Marlene"
-		
-	return voiceId
+	pollyVoiceMapping = {'ar':'Zeina', 'zh':'Zhiyu', 'da':'Naja', 'nl':'Lotte', 'en':'Ivy', 'fr':'Mathieu', 'fr':'Chantal', 'de':'Marlene', 'hi':'Aditi', 'is':'Karl', 'it':'Carla', 'ja':'Mizuki', 'ko':'Seoyeon', 'no':'Liv', 'pl':'Jan', 'pt':'Ricardo', 'ro':'Carmen', 'ru':'Maxim', 'es':'Enrique', 'sv':'Astrid', 'tr':'Filiz', 'cy':'Gwyneth'}
+	return pollyVoiceMapping[targetLangCode]
 	
 	
 # ==================================================================================
@@ -145,7 +140,6 @@ def getSecondsFromTranslation( textToSynthesize, targetLangCode, audioFileName )
 
 	# Set up the polly and translate services
 	client = boto3.client('polly')
-	translate = boto3.client(service_name='translate', region_name="us-east-1", use_ssl=True)
 	
 	# Use the translated text to create the synthesized speech
 	response = client.synthesize_speech( OutputFormat="mp3", SampleRate="22050", Text=textToSynthesize, VoiceId=getVoiceId( targetLangCode ) )
@@ -159,5 +153,24 @@ def getSecondsFromTranslation( textToSynthesize, targetLangCode, audioFileName )
 	# return the duration
 	return audio.duration
 	
+
+def getAudioTranscript(translatedTranscript, targetLangCode, mp3OutFile):
+	client = boto3.client('polly')
+	response = client.synthesize_speech( OutputFormat="mp3", SampleRate="22050", Text=translatedTranscript, VoiceId=getVoiceId( targetLangCode ) )
+	writeAudioStream(response, mp3OutFile)
 	
-	
+def overwriteAudio(videoClip, outputFile, audioClipFile=None, audioClipObject=None):
+	video = VideoFileClip(videoClip)
+	if audioClipFile:
+		audio = AudioFileClip(audioClipFile)
+		video = video.set_audio(audio)
+		video.write_videofile(outputFile)
+	else:
+		video = video.set_audio(audioClipObject)
+		video.write_videofile(outputFile)
+	return
+
+def getOrigAudio(videoFile, tempAudioFile):
+	currClip = VideoFileClip(videoFile)
+	currClip.audio.write_audiofile(tempAudioFile)
+	return currClip.audio

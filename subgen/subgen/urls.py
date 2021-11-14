@@ -26,6 +26,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(routes.urls)),
     path('completed_job/', views.completed_job, name='completed_job'),
+    path('translate_transcript/', views.translate_transcript, name='translate_transcript'),
+    path('overwrite_audio/', views.ovewriteAudioTrack, name='overwrite_audio_track'),
+    path('burn_captions/', views.burnCaptions, name='burn_captions'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 if settings.DEBUG:

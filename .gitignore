@@ -5,3 +5,6 @@ subgen/media/uploads/*
 # Local Netlify folder
 .netlify
 emailCreds.txt
+*.srt
+*.mp4
+*.mp3
