@@ -100,7 +100,9 @@ def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileNa
 		
 	# Now create phrases from the translation
 	textToTranslate = (translation["TranslatedText"])
-	phrases = getPhrasesFromTranslation( textToTranslate, targetLangCode )
+	transcriptJson = json.loads(transcript)
+	beginningSeconds = float(transcriptJson['results']['items'][0]['start_time'])
+	phrases = getPhrasesFromTranslation( textToTranslate, targetLangCode, begSeconds=beginningSeconds )
 	writeSRT( phrases, srtFileName )
 	return textToTranslate
 	
@@ -115,7 +117,7 @@ def writeTranslationToSRT( transcript, sourceLangCode, targetLangCode, srtFileNa
 #                 translation - the JSON output from Amazon Translate
 #                 targetLangCode - the language code for the translated content (e.g. Spanish = "ES")
 # ==================================================================================	
-def getPhrasesFromTranslation( translation, targetLangCode ):
+def getPhrasesFromTranslation( translation, targetLangCode, begSeconds=0 ):
 
 	# Now create phrases from the translation
 	words = translation.split()
@@ -128,7 +130,7 @@ def getPhrasesFromTranslation( translation, targetLangCode ):
 	nPhrase = True
 	x = 0
 	c = 0
-	seconds = 0
+	seconds = begSeconds
 
 	print("==> Creating phrases from translation...")
 	audioFilesToDelete = []
@@ -329,12 +331,3 @@ def getPhraseText( phrase ):
 			out += phrase["words"][i]
 			
 	return out
-	
-
-			
-
-	
-
-
-	
-	
