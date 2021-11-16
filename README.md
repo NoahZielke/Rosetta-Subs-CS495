@@ -1,5 +1,5 @@
 # Description
-Rosetta-Subs is an app build using Django and React that makes adding subtitles to a video in any language easy!
+Rosetta-Subs is an app built using Django and React that makes adding subtitles to a video in any language easy!
 
 
 # Web App
