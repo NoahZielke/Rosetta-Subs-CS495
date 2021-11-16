@@ -1,6 +1,10 @@
 import { NonAuthNavbar } from "../components/NonAuthNavbar";
+import { useHistory } from "react-router";
+// Below is needed to ignore href requirement for <a> tags -> we use history.push for routing
+/* eslint-disable jsx-a11y/anchor-is-valid */ 
 
 const LandingPage = () => {
+  const history = useHistory();
   return (
     <div>
       <NonAuthNavbar active='home'/>
@@ -19,7 +23,7 @@ const LandingPage = () => {
               user:
             </p>
             <div className='pb-4'>
-              <a href='/app-home' className='btn btn-success app-button'>
+              <a onClick={() => { history.push('/app-home'); }} className='btn btn-success app-button'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   width='20'

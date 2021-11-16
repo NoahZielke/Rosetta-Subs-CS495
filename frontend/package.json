@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.0",
     "axios": "^0.21.4",
     "bootstrap": "^5.1.1",
+    "downloadjs": "^1.4.7",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.0",
     "react-dom": "^17.0.2",
@@ -50,7 +51,12 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.1.6",
+    "@types/downloadjs": "^1.4.2",
+    "@types/file-saver": "^2.0.3",
+    "@types/jszip": "^3.4.1",
     "@types/react-router-dom": "^5.1.9",
-    "@types/validator": "^13.6.3"
+    "@types/validator": "^13.6.3",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.7.1"
   }
 }
