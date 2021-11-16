@@ -30,6 +30,7 @@ urlpatterns = [
     path('overwrite_audio/', views.ovewriteAudioTrack, name='overwrite_audio_track'),
     path('burn_captions/', views.burnCaptions, name='burn_captions'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('download_file/<str:file>/', views.downloadFile, name="download_file"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

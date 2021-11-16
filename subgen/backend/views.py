@@ -11,7 +11,7 @@ from .models import Job
 from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, burnCaption, sendEmail
 from .srtUtils import writeTranslationToSRT
 from .audioUtils import getAudioTranscript, overwriteAudio, getOrigAudio
-import json, datetime, shutil, os
+import json, datetime, shutil, os, random, string
 from django.http import HttpResponse, FileResponse
 from zipfile import ZipFile
 from django.core.files.storage import FileSystemStorage
@@ -120,17 +120,22 @@ def burnCaptions(request):
         shutil.move(str(settings.MEDIA_ROOT) + '/' + videoFile.name, basePath + videoFile.name)
         shutil.move(str(settings.MEDIA_ROOT) + '/' + subtitleFile.name, basePath + subtitleFile.name)
         outputFile = basePath + (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1]
+        outputFileName = ''.join(random.choice(string.ascii_lowercase) for i in range(16)) + '.' + (videoFile.name).split('.')[1]
         burnCaption(basePath + videoFile.name, basePath + subtitleFile.name, outputFile)
+        shutil.move(outputFile, settings.MEDIA_ROOT + '/user_downloads/' + outputFileName)
         subject = "Download your files"
         body = "The video with the subtitles burnt in is attached"
-        sendEmail(request.POST['emailAddress'], subject, body, outputFile, (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1])
-        return HttpResponse("<html><body>Email sent</body></html>")
+        # sendEmail(request.POST['emailAddress'], subject, body, outputFile, (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1])
+        return HttpResponse(f"<html><body>{outputFileName}>/body></html>")
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
 def input_vocabulary(request):
-
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
+
+def downloadFile(request, file):
+    returnFile = settings.MEDIA_ROOT + '/user_downloads/' + file
+    return FileResponse(open(returnFile, 'rb'))
