@@ -98,10 +98,12 @@ def ovewriteAudioTrack(request):
         shutil.move(str(settings.MEDIA_ROOT) + '/' + audioFile.name, basePath + audioFile.name)
         outputFile = basePath + (audioFile.name).split('.')[0] + '.' + (videoFile.name).split('.')[1]
         overwriteAudio(basePath + videoFile.name, outputFile, audioClipFile=basePath + audioFile.name)
-        returnFile = open(outputFile, 'rb')
         for file in [basePath + videoFile.name, basePath + audioFile.name]:
             os.remove(file)
-        return FileResponse(returnFile)
+        subject = "Download your files"
+        body = "The video with the overwritten audio track is attached"
+        sendEmail(request.POST['emailAddress'], subject, body, outputFile, (audioFile.name).split('.')[0] + '.' + (videoFile.name).split('.')[1])
+        return HttpResponse("<html><body>Email sent</body></html>")
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
@@ -119,7 +121,10 @@ def burnCaptions(request):
         shutil.move(str(settings.MEDIA_ROOT) + '/' + subtitleFile.name, basePath + subtitleFile.name)
         outputFile = basePath + (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1]
         burnCaption(basePath + videoFile.name, basePath + subtitleFile.name, outputFile)
-        return FileResponse(open(outputFile, 'rb'))
+        subject = "Download your files"
+        body = "The video with the subtitles burnt in is attached"
+        sendEmail(request.POST['emailAddress'], subject, body, outputFile, (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1])
+        return HttpResponse("<html><body>Email sent</body></html>")
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
