@@ -1,4 +1,4 @@
-from backend.models import Job
+from backend.models import Job, User
 from django.conf import settings
 import email, smtplib, ssl
 from email import encoders
@@ -167,11 +167,11 @@ def transcribeNewUploads():
                 job_uri = "s3://subgenstoragebucket/" + newLoc
                 outputFile = "subgen_output/" + str(job.id) + ".json"
                 transcribe.start_transcription_job(
+                        IdentifyLanguage=True,
                         TranscriptionJobName=str(job.id),
                         Media={'MediaFileUri': job_uri},
                         OutputBucketName="subgenstoragebucket",
-                        OutputKey=outputFile,
-                        LanguageCode='en-US'
+                        OutputKey=outputFile
                 )
     
                 #Change job status
@@ -180,6 +180,14 @@ def transcribeNewUploads():
         
                 # If we want to delete file after sent to s3: 
                 os.remove(filename)
+
+def receiveVocabWords(user, words):
+    currUser = User.object.filter(name=user)
+    if currUser.vocab == False:
+        genVocabFile(user, words)
+    else:
+        updateVocabFile(user, words)
+
 
 #Function to create text file for vocab and upload to s3
 #args --
@@ -240,7 +248,7 @@ def updateVocabFile(user, words):
     s3 = boto3.client('s3')
     downloadFileName = user + ".txt"
     try:
-        s3.Bucket('subgenstoragebucket').download_file('vocab/'+downloadFileName, str(settings.BASE_DIR)+'/media/temp/'+filename)
+        s3.Bucket('subgenstoragebucket').download_file('vocab/'+downloadFileName, str(settings.BASE_DIR)+'/media/temp/'+ downloadFileName)
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
             print("Vocab file could not be found")
@@ -295,7 +303,7 @@ def updateVocabFile(user, words):
 #   user - username for retrieval
 def getVocab(user):
     currUser = User.object.filter(name=user)
-    if currUser.vocab == false:
+    if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
     s3 = boto3.client('s3')
@@ -320,4 +328,16 @@ def getVocab(user):
 
     print(vocabWords)
     os.remove(filename)
+    return vocabWords
 
+#Function to delete users vocabulary file
+#args -- 
+#   user - username of user whose vocabulary needs deleted
+def deleteVocab(user):
+    currUser = User.object.filter(name=user)
+    if currUser.vocab == False:
+        print("User does not have a vocabulary file. Please create one\n")
+        return
+    s3 = boto3.client('s3')
+    fileUri = "vocab/" + user + ".txt"
+    s3.delete_object(Bucket='subgenstoragebucket', Key=fileUri)

@@ -3,10 +3,11 @@ from rest_framework import viewsets, parsers
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
+from subgen.backend.utils import receiveVocabWords
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
-from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads
+from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, getVocab, receiveVocabWords, deleteVocabulary
 import json, datetime
 from django.http import HttpResponse
 
@@ -55,7 +56,30 @@ def failed_job(request):
     return
 
 def input_vocabulary(request):
+    if request.method == 'POST':
+        username = request.POST.get("username", '')
+        words = request.POST.get("words", '')
+        receiveVocabWords(username, words)
 
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html)
+
+def delete_vocabulary(request):
+    if request.method == 'POST':
+        username = request.POST.get("username", '')
+        deleteVocabulary(username)
+
+    now = datetime.datetime.now()
+    html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html)
+
+def display_vocab(request):
+    if request.method == 'GET':
+        username = request.GET.get("username", '')
+        words = getVocab(username)
+        html = "<html><body>Vocabulary Words: %s.</body></html>" % words
+    else:
+        now = datetime.datetime.now()
+        html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
