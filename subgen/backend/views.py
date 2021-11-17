@@ -76,7 +76,7 @@ def translate_transcript(request):
             zipFile.close()
             subject = "Download your files"
             body = "Your translated transcript and translated audio are attached"
-            sendEmail(request.POST['emailAddress'], subject, body, zipFileOutFilePath, filename + '_' + targetLanguage + '.zip')
+            sendEmail(request.POST['emailAddress'], subject, body, file=zipFileOutFilePath, filename=filename + '_' + targetLanguage + '.zip')
             return HttpResponse("<html><body>Email sent</body></html>")
         html = "<html><body>translating file {} <br></body></html>".format(file.name)
         return FileResponse(open(srtOutFile, 'rb'))
@@ -98,11 +98,13 @@ def ovewriteAudioTrack(request):
         shutil.move(str(settings.MEDIA_ROOT) + '/' + audioFile.name, basePath + audioFile.name)
         outputFile = basePath + (audioFile.name).split('.')[0] + '.' + (videoFile.name).split('.')[1]
         overwriteAudio(basePath + videoFile.name, outputFile, audioClipFile=basePath + audioFile.name)
+        outputFileName = ''.join(random.choice(string.ascii_lowercase) for i in range(16)) + '.' + (videoFile.name).split('.')[1]
+        shutil.move(outputFile, settings.MEDIA_ROOT + '/user_downloads/' + outputFileName)
         for file in [basePath + videoFile.name, basePath + audioFile.name]:
             os.remove(file)
-        subject = "Download your files"
-        body = "The video with the overwritten audio track is attached"
-        sendEmail(request.POST['emailAddress'], subject, body, outputFile, (audioFile.name).split('.')[0] + '.' + (videoFile.name).split('.')[1])
+        subject = "Audio overwrite is complete"
+        body = "Please go to this link to download your video file: https://subgen.lselkins.com/download_file/" + outputFileName
+        sendEmail(request.POST['emailAddress'], subject, body)
         return HttpResponse("<html><body>Email sent</body></html>")
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
@@ -123,10 +125,10 @@ def burnCaptions(request):
         outputFileName = ''.join(random.choice(string.ascii_lowercase) for i in range(16)) + '.' + (videoFile.name).split('.')[1]
         burnCaption(basePath + videoFile.name, basePath + subtitleFile.name, outputFile)
         shutil.move(outputFile, settings.MEDIA_ROOT + '/user_downloads/' + outputFileName)
-        subject = "Download your files"
-        body = "The video with the subtitles burnt in is attached"
-        # sendEmail(request.POST['emailAddress'], subject, body, outputFile, (videoFile.name).split('.')[0] + '_burnt_subs.' + (videoFile.name).split('.')[1])
-        return HttpResponse(f"<html><body>{outputFileName}>/body></html>")
+        subject = "Caption burning is complete"
+        body = "Please go to this link to download your video file: https://subgen.lselkins.com/download_file/" + outputFileName
+        sendEmail(request.POST['emailAddress'], subject, body)
+        return HttpResponse(f"<html><body>Email sent>/body></html>")
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)

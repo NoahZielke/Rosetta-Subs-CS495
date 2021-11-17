@@ -176,7 +176,7 @@ def transcribeNewUploads(job):
                     Media={'MediaFileUri': job_uri},
                     OutputBucketName="subgenstoragebucket",
                     OutputKey=outputFile,
-                    LanguageCode='en-US'
+                    IdentifyLanugage=True,
             )
             os.remove(filename)
             #Change job status
@@ -229,7 +229,7 @@ def burnCaption(videoFile, srtFile, outputFile):
     final = mp.CompositeVideoClip([myvideo, sub.set_position(('center', 'bottom'))])
     final.write_videofile(outputFile, fps=myvideo.fps)
 
-def sendEmail(emailAddress, subject, body, file, filename):
+def sendEmail(emailAddress, subject, body, file=None, filename=None):
     sender_email = "noreply.subgen@gmail.com"
     password = settings.EMAIL_PASSWORD
     receiver_email = emailAddress
@@ -239,16 +239,16 @@ def sendEmail(emailAddress, subject, body, file, filename):
     message["Subject"] = subject
     message["Bcc"] = receiver_email  # Recommended for mass emails
     message.attach(MIMEText(body, "plain"))
-
-    with open(file, "rb") as attachment:
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(attachment.read())
-    encoders.encode_base64(part)
-    part.add_header(
-        "Content-Disposition",
-        f"attachment; filename= {filename}",
-    )
-    message.attach(part)
+    if file is not None:
+        with open(file, "rb") as attachment:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename= {filename}",
+        )
+        message.attach(part)
 
     text = message.as_string()
     # Log in to server using secure context and send email
