@@ -59,11 +59,8 @@ def input_vocabulary(request):
     if request.method == 'POST':
         username = request.POST.get("username", '')
         words = request.POST.get("words", '')
-        receiveVocabWords(username, words)
-
-    now = datetime.datetime.now()
-    html = "<html><body>It is now %s.</body></html>" % now
-    return HttpResponse(html)
+        output = receiveVocabWords(username, words)
+        return HttpResponse(output)
 
 def delete_vocabulary(request):
     if request.method == 'POST':
@@ -78,8 +75,4 @@ def display_vocab(request):
     if request.method == 'GET':
         username = request.GET.get("username", '')
         words = getVocab(username)
-        html = "<html><body>Vocabulary Words: %s.</body></html>" % words
-    else:
-        now = datetime.datetime.now()
-        html = "<html><body>It is now %s.</body></html>" % now
-    return HttpResponse(html)
+        return HttpResponse(words)

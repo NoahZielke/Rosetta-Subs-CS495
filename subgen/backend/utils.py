@@ -184,9 +184,9 @@ def transcribeNewUploads():
 def receiveVocabWords(user, words):
     currUser = User.object.filter(name=user)
     if currUser.vocab == False:
-        genVocabFile(user, words)
+        return genVocabFile(user, words)
     else:
-        updateVocabFile(user, words)
+        return updateVocabFile(user, words)
 
 
 #Function to create text file for vocab and upload to s3
@@ -197,7 +197,9 @@ def genVocabFile(user, words):
     filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
     f = open(filename, "w+")
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
+    output = ""
     for word in words:
+        output += word + ", "
         formWord = word.translate(str.maketrans('','',str.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
         if '*' in ipaWord:
@@ -210,6 +212,7 @@ def genVocabFile(user, words):
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
+    output = output[:-1]
 
     uploadFileName = "vocab/" + user + ".txt"
     s3 = boto3.client('s3')
@@ -238,7 +241,9 @@ def genVocabFile(user, words):
             time.sleep(10)
 
     #Update user model to indicate vocabulary exists for user
-    #currUser = User.objects.filter(name=user)
+    currUser = User.objects.filter(name=user)
+    currUser.vocab = True
+    return output
 
 #Function to update text file for vocab and upload to s3
 #args --
@@ -252,12 +257,23 @@ def updateVocabFile(user, words):
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
             print("Vocab file could not be found")
+            return "Vocab file could not be found"
         else:
             raise
     
     filename = str(settings.BASE_DIR) + "/media/temp/" + user + ".txt"
+
+    output = ""
+    q = open(filename, "r")
+    lines = q.readlines()
+    for line in lines:
+        chunks = line.split("\t")
+        output += chunks[3] + ", "
+    q.close()
+
     f = open(filename, "w+")
     for word in words:
+        output += word + ", "
         formWord = word.translate(str.maketrans('','',str.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
         if '*' in ipaWord:
@@ -270,6 +286,7 @@ def updateVocabFile(user, words):
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
+    output = output[:-1]
 
     s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
 
@@ -296,7 +313,7 @@ def updateVocabFile(user, words):
             break
         else:
             time.sleep(10)
-
+    return output
 
 #Function to retrieve vocabulary for displaying
 #args --
@@ -324,7 +341,8 @@ def getVocab(user):
 
     for line in lines:
         chunks = line.split("\t")
-        vocabWords = vocabWords + ", " + chunks[3]
+        vocabWords += chunks[3] + ", "
+    vocabWords = vocabWords[:-1]
 
     print(vocabWords)
     os.remove(filename)
