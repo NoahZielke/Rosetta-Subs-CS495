@@ -223,9 +223,10 @@ def genVocabFile(user, words):
 
 
 def burnCaption(videoFile, srtFile, outputFile):
-    generator = lambda txt: mp.TextClip(txt, font='Georgia-Regular', fontsize=42, color='white', bg_color='black')
-    sub = SubtitlesClip(srtFile, generator)
     myvideo = VideoFileClip(videoFile)
+    fontSize = int(myvideo.w / 450 * 14)
+    generator = lambda txt: mp.TextClip(txt, font='Georgia-Regular', fontsize=fontSize, color='white', bg_color='black')
+    sub = SubtitlesClip(srtFile, generator)
     final = mp.CompositeVideoClip([myvideo, sub.set_position(('center', 'bottom'))])
     final.write_videofile(outputFile, fps=myvideo.fps)
 
