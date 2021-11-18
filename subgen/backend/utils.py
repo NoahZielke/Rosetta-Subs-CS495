@@ -197,9 +197,9 @@ def genVocabFile(user, words):
     filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
     f = open(filename, "w+")
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
-    output = ""
+    output = []
     for word in words:
-        output += word + ", "
+        output.append(word)
         formWord = word.translate(str.maketrans('','',str.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
         if '*' in ipaWord:
@@ -212,7 +212,6 @@ def genVocabFile(user, words):
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
-    output = output[:-1]
 
     uploadFileName = "vocab/" + user + ".txt"
     s3 = boto3.client('s3')
@@ -263,17 +262,17 @@ def updateVocabFile(user, words):
     
     filename = str(settings.BASE_DIR) + "/media/temp/" + user + ".txt"
 
-    output = ""
+    output = []
     q = open(filename, "r")
     lines = q.readlines()
     for line in lines:
         chunks = line.split("\t")
-        output += chunks[3] + ", "
+        output.append(chunks[3])
     q.close()
 
     f = open(filename, "w+")
     for word in words:
-        output += word + ", "
+        output.append(word)
         formWord = word.translate(str.maketrans('','',str.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
         if '*' in ipaWord:
@@ -286,7 +285,6 @@ def updateVocabFile(user, words):
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
-    output = output[:-1]
 
     s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
 
@@ -337,13 +335,11 @@ def getVocab(user):
     fileLoc = str(settings.BASE_DIR) + "/media/temp/" + filename
     f = open(fileLoc, "r")
     lines = f.readlines()
-    vocabWords = ""
+    vocabWords = []
 
     for line in lines:
         chunks = line.split("\t")
-        vocabWords += chunks[3] + ", "
-    vocabWords = vocabWords[:-1]
-
+        vocabWords.append(chunks[3])
     print(vocabWords)
     os.remove(filename)
     return vocabWords
@@ -356,6 +352,9 @@ def deleteVocab(user):
     if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
+    
+    transcribe = boto3.client('transcribe')
+    transcribe.delete_vocabulary(VocabularyName = user)
     s3 = boto3.client('s3')
     fileUri = "vocab/" + user + ".txt"
     s3.delete_object(Bucket='subgenstoragebucket', Key=fileUri)

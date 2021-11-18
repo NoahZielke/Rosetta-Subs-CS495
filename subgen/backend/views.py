@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Job
 from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, getVocab, receiveVocabWords, deleteVocabulary
 import json, datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 
 # class UserViewSet(viewsets.ModelViewSet):
@@ -60,7 +60,7 @@ def input_vocabulary(request):
         username = request.POST.get("username", '')
         words = request.POST.get("words", '')
         output = receiveVocabWords(username, words)
-        return HttpResponse(output)
+        return JsonResponse(output, safe=False)
 
 def delete_vocabulary(request):
     if request.method == 'POST':
@@ -74,5 +74,5 @@ def delete_vocabulary(request):
 def display_vocab(request):
     if request.method == 'GET':
         username = request.GET.get("username", '')
-        words = getVocab(username)
-        return HttpResponse(words)
+        output = getVocab(username)
+        return JsonResponse(output, safe=False)
