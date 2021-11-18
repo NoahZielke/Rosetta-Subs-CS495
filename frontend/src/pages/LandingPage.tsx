@@ -15,8 +15,7 @@ const LandingPage = () => {
         <div className='row pb-5 pt-4'>
           <div className='col-lg-8 col-11 main-module justify-content-center'>
             <p className='pt-4 pb-2 px-2 main-module-text'>
-              Rosetta-Subs is an app designed to make adding subtitles to a video
-              in any language easy
+              Rosetta-Subs is an app designed to make it easy to add subtitles to a video in many different languages
             </p>
             <p className='main-module-text pb-3'>
               This browser-based application requires no setup on the part of the

@@ -14,22 +14,22 @@ export const ToolMenu = () => {
                         {/* Note: for all items - Strange href value is to prevent a npm linting warning. Routing is done via history.push */}
                         <div className='py-3 tool-select-div' style={{ borderTop: "1px solid rgb(180, 180, 180)"}}>
                             <a onClick={() => { history.push('/app-transcribe'); }} className="tool-menu">
-                                Get Subtitle File From Video/Audio
+                                Get a Subtitle File From Video
                             </a>
                         </div>
                         <div className='py-3 tool-select-div'>
                             <a onClick={() => { history.push('/app-translate'); }} style={{cursor: "pointer"}} className="tool-menu">
-                                Translate Subtitle File
+                                Translate a Subtitle File 
                             </a>
                         </div>
                         <div className='py-3 tool-select-div'>
                             <a onClick={() => { history.push('/app-dub-audio'); }} className="tool-menu">
-                                Overwrite Audio With Translated Dub
+                                Overwrite the Audio of a Video File
                             </a>
                         </div>
                         <div className='py-3 tool-select-div'>
                             <a onClick={() => { history.push('/app-burn-subtitles'); }} className="tool-menu">
-                                Burn Subtitles Into Video File
+                                Burn Subtitles Into a Video File
                             </a>
                         </div>
                         <div className="py-3"></div>
