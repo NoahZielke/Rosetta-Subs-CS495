@@ -8,7 +8,7 @@ class Job(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, default="Started")
     email_address = models.EmailField(max_length=254, default="test@domain.com")
-    language = models.CharField(max_length=255, default="English", blank=True)
+    language = models.CharField(max_length=255, default="English, US")
     class Meta:
         app_label='backend'
     def __str__(self):

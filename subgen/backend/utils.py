@@ -72,7 +72,7 @@ def sendFilesCompleted(jobName):
             f"attachment; filename= {(str(job.filename)).split('.')[0]  + '.' + (file.split('/')[-1]).split('.')[1]}",
         )
         message.attach(part)
-
+    print("Sending email")
     text = message.as_string()
     # Log in to server using secure context and send email
     context = ssl.create_default_context()
@@ -142,16 +142,19 @@ def sendFilesFailed(jobName):
     for file in files:
         os.remove(file)
 
+def getTranscribeLanguageCode(language):
+    languageCodeMapping = {'Afrikaans': 'af-ZA', 'Arabic, Gulf': 'ar-AE', 'Arabic, Modern Standard': 'ar-SA', 'Chinese, Simplified': 'zh-CN', 'Chinese, Traditional': 'zh-TW', 'Danish': 'da-DK', 'Dutch': 'nl-NL', 'English, Australian': 'en-AU', 'English, British': 'en-GB', 'English, Indian': 'en-IN', 'English, Irish': 'en-IE', 'English, New Zealand': 'en-NZ', 'English, Scottish': 'en-AB', 'English, South African': 'en-ZA', 'English, US': 'en-US', 'English, Welsh': 'en-WL', 'French': 'fr-FR', 'French, Canadian': 'fr-CA', 'Farsi': 'fa-IR', 'German': 'de-DE', 'German, Swiss': 'de-CH', 'Hebrew': 'he-IL', 'Hindi, Indian': 'hi-IN', 'Indonesian': 'id-ID', 'Italian': 'it-IT', 'Japanese': 'ja-JP', 'Korean': 'ko-KR', 'Malay': 'ms-MY', 'Portuguese': 'pt-PT', 'Portuguese, Brazilian': 'pt-BR', 'Russian': 'ru-RU', 'Spanish': 'es-ES', 'Spanish, US': 'es-US', 'Tamil': 'ta-IN', 'Telugu': 'te-IN', 'Thai': 'th-TH', 'Turkish': 'tr-TR'}
+    try:
+        return languageCodeMapping[language]
+    except:
+        return None
 
 def transcribeNewUploads(job):
+    print('Starting to transcribe')
     s3 = boto3.resource('s3')
     transcribe = boto3.client('transcribe')
-    newJobs = Job.objects.filter(status='Started')
+
     #Still checking with transcribe for all 'Started' Jobs in case of multiple file uploads or possibly ignored job
-#    if newJobs:
- #       for job in newJobs:
-    
-            #Video file location
     uploadFile = (str(settings.BASE_DIR)+"/media/uploads/" + str(job.filename).split('/')[-1]).replace(' ', '_')
     #Audio file location
     filename = str(settings.BASE_DIR)+'/media/uploads/' + str(job.id) + ".mp3"
@@ -171,13 +174,24 @@ def transcribeNewUploads(job):
             #Request Transcription Job
             job_uri = "s3://subgenstoragebucket/" + newLoc
             outputFile = "subgen_output/" + str(job.id) + ".json"
-            transcribe.start_transcription_job(
-                    TranscriptionJobName=str(job.id),
-                    Media={'MediaFileUri': job_uri},
-                    OutputBucketName="subgenstoragebucket",
-                    OutputKey=outputFile,
-                    IdentifyLanugage=True,
-            )
+            languageCode = getTranscribeLanguageCode(job.language)
+            print(languageCode)
+            if languageCode == None:
+                transcribe.start_transcription_job(
+                        TranscriptionJobName=str(job.id),
+                        Media={'MediaFileUri': job_uri},
+                        OutputBucketName="subgenstoragebucket",
+                        OutputKey=outputFile,
+                        LanguageCode='en-US',
+                )
+            else:
+                transcribe.start_transcription_job(
+                        TranscriptionJobName=str(job.id),
+                        Media={'MediaFileUri': job_uri},
+                        OutputBucketName="subgenstoragebucket",
+                        OutputKey=outputFile,
+                        LanguageCode=languageCode,
+                )
             os.remove(filename)
             #Change job status
             job.status='Transcribing'
@@ -220,7 +234,6 @@ def genVocabFile(user, words):
     # Update user model to indicate vocabulary exists for user
     #currUser = User.objects.filter(name=user)
     #currUser.vocab = true
-
 
 def burnCaption(videoFile, srtFile, outputFile):
     myvideo = VideoFileClip(videoFile)
