@@ -3,7 +3,7 @@ Rosetta-Subs is an app built using Django and React that makes adding subtitles 
 
 
 # Web App
-To view our project website, which includes the web app, visit us at https://rossetta-subs.netlify.app/
+To view our project website, which includes the web app, visit us at https://rosetta-subs.netlify.app/
 
 
 # Development and Hosting Information
