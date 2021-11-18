@@ -47,7 +47,7 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
         <div
           {...getRootProps()}
           className=' d-flex flex-column justify-content-center align-items-center p-4'>
-          <h4>Upload a Video or Audio File to Begin</h4>
+          <h4>Upload a Video File to Begin</h4>
           <input {...getInputProps()} />
           {isDragActive ? (
             <CloudUploadSVG width='256' height='256' />
@@ -62,11 +62,11 @@ const UploadDropzone: React.FC<UploadDropzoneProps> = ({ setFiles }) => {
           </button>
         </div>
       </div>
-      <p
+      {/* <p
         className='text-center pt-3 text-primary btn-link mb-0'
         style={{ cursor: "pointer" }}>
         For additional instructions click here.
-      </p>
+      </p> */}
       {/* </div>
       </div> */}
     </div>
