@@ -3,11 +3,10 @@ from rest_framework import viewsets, parsers
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
-from subgen.backend.utils import receiveVocabWords
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
-from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, getVocab, receiveVocabWords, deleteVocabulary
+from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, getVocab, receiveVocabWords, deleteVocab
 import json, datetime
 from django.http import HttpResponse, JsonResponse
 
@@ -55,24 +54,32 @@ def failed_job(request):
 
     return
 
+@csrf_exempt
 def input_vocabulary(request):
     if request.method == 'POST':
-        username = request.POST.get("username", '')
-        words = request.POST.get("words", '')
+        json_data = json.loads(request.body)
+        try:
+            username = json_data['username']
+            words = json_data['words']
+        except KeyError:
+            return HttpResponse("Format Error")
         output = receiveVocabWords(username, words)
         return JsonResponse(output, safe=False)
 
+@csrf_exempt
 def delete_vocabulary(request):
     if request.method == 'POST':
         username = request.POST.get("username", '')
-        deleteVocabulary(username)
+        deleteVocab(username)
 
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
-def display_vocab(request):
-    if request.method == 'GET':
-        username = request.GET.get("username", '')
+@csrf_exempt
+def display_vocabulary(request):
+    if request.method == 'POST':
+        username = request.POST.get("username", '')
+        print("USER:  " + username)
         output = getVocab(username)
         return JsonResponse(output, safe=False)

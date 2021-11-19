@@ -1,4 +1,5 @@
-from backend.models import Job, User
+from backend.models import Job
+from user.models import User
 from django.conf import settings
 import email, smtplib, ssl
 from email import encoders
@@ -13,6 +14,7 @@ import moviepy.editor as mp
 from .srtUtils import *
 import eng_to_ipa as ipa
 import time
+import string
 
 def pullJSONGenSRTCompleted(jobName):
     s3 = boto3.resource('s3')
@@ -182,11 +184,15 @@ def transcribeNewUploads():
                 os.remove(filename)
 
 def receiveVocabWords(user, words):
-    currUser = User.object.filter(name=user)
-    if currUser.vocab == False:
-        return genVocabFile(user, words)
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        err = "User does not exist"
+        return err
     else:
-        return updateVocabFile(user, words)
+        if currUser.vocab == False:
+            return genVocabFile(user, words)
+        else:
+            return updateVocabFile(user, words)
 
 
 #Function to create text file for vocab and upload to s3
@@ -194,27 +200,46 @@ def receiveVocabWords(user, words):
 #   user - username for vocab file
 #   words - array of words/phrases/acronym
 def genVocabFile(user, words):
+
+    symbols = ["a", "b", "d", "f", "g", "h", "i", "j", "k", "l", "m", "n", "p", "s", "t", "u", "v", "w", "z",
+                 "ə", "eɪ", "ɑ", "æ","ə","ɔ",
+                "aʊ",  "aɪ", "ʧ", "ð", "ɛ",
+                "h", "ɪ", "ʤ", "ŋ", "oʊ", "ɔɪ",
+                "ʃ", "θ", "ʊ", "u", "ʒ", "l̩", "n̩", "ɝ", "ɡ", "ɹ", "ʌ", "ʍ"]
+
     filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
     f = open(filename, "w+")
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
     output = []
     for word in words:
         output.append(word)
-        formWord = word.translate(str.maketrans('','',str.punctuation))
+        formWord = word.replace("-", " ")
+        formWord = formWord.translate(str.maketrans('','',string.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
-        if '*' in ipaWord:
-            print("ERROR: Unable to translate word: " + word + " to IPA for vocabulary creation\n")
+
+        if '*' in convWord:
+            print("Unable to translate word: " + word + " to IPA for vocabulary creation\n")
             ipaWord = ""
         else:
-            ipaWord = " ".join(convWord.replace(" ", ""))
+            ipaWord = convWord.replace("  ", " ")
             ipaWord = ipaWord.strip()
+
+            segments = ipaWord.split(" ")
+            for seg in segments:
+                if seg in symbols:
+                    pass
+                else:
+                    print("Unsupported character in translation, IPA unavailable for this word")
+                    ipaWord = ""
+                    break
+
         dashedWord = word.replace(' ', '-')
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
 
     uploadFileName = "vocab/" + user + ".txt"
-    s3 = boto3.client('s3')
+    s3 = boto3.resource('s3')
     data = open(filename, 'rb')
     s3.Bucket('subgenstoragebucket').put_object(Key=uploadFileName, Body=data)
     os.remove(filename)
@@ -240,8 +265,9 @@ def genVocabFile(user, words):
             time.sleep(10)
 
     #Update user model to indicate vocabulary exists for user
-    currUser = User.objects.filter(name=user)
+    currUser = User.objects.get(username=user)
     currUser.vocab = True
+    currUser.save()
     return output
 
 #Function to update text file for vocab and upload to s3
@@ -249,7 +275,12 @@ def genVocabFile(user, words):
 #   user - username for vocab file
 #   words - array of words/phrases/acronym
 def updateVocabFile(user, words):
-    s3 = boto3.client('s3')
+    symbols = ["a", "b", "d", "f", "g", "h", "i", "j", "k", "l", "m", "n", "p",
+                 "s", "t", "u", "v", "w", "z", "ə", "eɪ", "ɑ", "æ","ə","ɔ",
+                "aʊ",  "aɪ", "ʧ", "ð", "ɛ", "h", "ɪ", "ʤ", "ŋ", "oʊ", "ɔɪ",
+                "ʃ", "θ", "ʊ", "u", "ʒ", "l̩", "n̩", "ɝ", "ɡ", "ɹ", "ʌ", "ʍ"]
+
+    s3 = boto3.resource('s3')
     downloadFileName = user + ".txt"
     try:
         s3.Bucket('subgenstoragebucket').download_file('vocab/'+downloadFileName, str(settings.BASE_DIR)+'/media/temp/'+ downloadFileName)
@@ -267,30 +298,47 @@ def updateVocabFile(user, words):
     lines = q.readlines()
     for line in lines:
         chunks = line.split("\t")
+        if chunks[3] == "DisplayAs":
+            continue
         output.append(chunks[3])
     q.close()
 
-    f = open(filename, "w+")
+    f = open(filename, "a")
     for word in words:
         output.append(word)
-        formWord = word.translate(str.maketrans('','',str.punctuation))
+        formWord = word.replace("-", " ")
+        formWord = formWord.translate(str.maketrans('','',string.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
-        if '*' in ipaWord:
-            print("ERROR: Unable to translate word: " + word + " to IPA for vocabulary creation\n")
+
+        if '*' in convWord:
+            print("Unable to translate word: " + word + " to IPA for vocabulary creation\n")
             ipaWord = ""
         else:
-            ipaWord = " ".join(convWord.replace(" ", ""))
+            ipaWord = convWord.replace("  ", " ")
             ipaWord = ipaWord.strip()
+
+            segments = ipaWord.split(" ")
+            for seg in segments:
+                if seg in symbols:
+                    pass
+                else:
+                    print("Unsupported character in translation, IPA unavailable for this word")
+                    ipaWord = ""
+                    break
+
         dashedWord = word.replace(' ', '-')
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
 
-    s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
+    #s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
+    s3.Bucket('subgenstoragebucket').delete_objects(Delete={
+        'Objects': [{'Key':'vocab/'+downloadFileName}]
+    })
 
     data = open(filename, 'rb')
     s3.Bucket('subgenstoragebucket').put_object(Key='vocab/'+downloadFileName, Body=data)
-    os.remove(filename)
+    #os.remove(filename)
 
     transcribe = boto3.client('transcribe')
     uriLoc = "s3://subgenstoragebucket/vocab/" + downloadFileName
@@ -317,11 +365,14 @@ def updateVocabFile(user, words):
 #args --
 #   user - username for retrieval
 def getVocab(user):
-    currUser = User.object.filter(name=user)
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        print("User does not exist")
+        return "Could not find user"
     if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
-    s3 = boto3.client('s3')
+    s3 = boto3.resource('s3')
     fileUri = "vocab/" + user + ".txt"
     filename = user + ".txt"
     try:
@@ -339,16 +390,24 @@ def getVocab(user):
 
     for line in lines:
         chunks = line.split("\t")
-        vocabWords.append(chunks[3])
+        chunk = chunks[3][:-1]
+        if chunk == "DisplayAs":
+            continue
+        vocabWords.append(chunk)
     print(vocabWords)
-    os.remove(filename)
+    f.close()
+    os.remove(fileLoc)
     return vocabWords
 
 #Function to delete users vocabulary file
 #args -- 
 #   user - username of user whose vocabulary needs deleted
 def deleteVocab(user):
-    currUser = User.object.filter(name=user)
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        print("User does not exist")
+        return
+        
     if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
@@ -358,3 +417,6 @@ def deleteVocab(user):
     s3 = boto3.client('s3')
     fileUri = "vocab/" + user + ".txt"
     s3.delete_object(Bucket='subgenstoragebucket', Key=fileUri)
+
+    currUser.vocab = False
+    currUser.save()
