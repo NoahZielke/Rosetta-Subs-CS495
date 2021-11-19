@@ -4,6 +4,10 @@ subgen/media/uploads/*
 subgen/auth/__pycache__/*
 subgen/backend/__pycache__/*
 subgen/user/__pycache__/*
+subgen/backend/migrations/__pycache__/*
+subgen/subgen/__pycache__/*
+subgen/subgen/settings/__pycache__/*
+subgen/user/migrations/__pycache__/*
 
 # Local Netlify folder
 .netlify
