@@ -31,6 +31,9 @@ urlpatterns = [
     path('burn_captions/', views.burnCaptions, name='burn_captions'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('download_file/<str:file>/', views.downloadFile, name="download_file"),
+    path('input_vocab/', views.input_vocabulary, name='input_vocab'),
+    path('delete_vocab/', views.delete_vocabulary, name='delete_vocab'),
+    path('display_vocab/', views.display_vocabulary, name='display_vocab'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

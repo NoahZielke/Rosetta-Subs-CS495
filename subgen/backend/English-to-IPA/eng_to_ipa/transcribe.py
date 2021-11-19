@@ -135,12 +135,12 @@ def cmu_to_ipa(cmu_list, mark=True, stress_marking='all'):
                         unmarked = piece[1:]
                     if unmarked in symbols:
                         if marked:
-                            ipa_form += mark + symbols[unmarked]
+                            ipa_form += mark + symbols[unmarked] + " "
                         else:
-                            ipa_form += symbols[unmarked]
+                            ipa_form += symbols[unmarked] + " "
 
                     else:
-                        ipa_form += piece
+                        ipa_form += piece + " "
             swap_list = [["ˈər", "əˈr"], ["ˈie", "iˈe"]]
             for sym in swap_list:
                 if not ipa_form.startswith(sym[0]):
