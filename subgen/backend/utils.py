@@ -170,6 +170,8 @@ def transcribeNewUploads(job):
     try:
         data = open(filename, 'rb')
         with data:
+            currUser = User.objects.get(email=job.email_address)
+            
             newLoc = "subgen_input/" + str(job.id) + ".mp3"
             s3.Bucket('subgenstoragebucket').put_object(Key=newLoc, Body=data)
                     
@@ -178,22 +180,42 @@ def transcribeNewUploads(job):
             outputFile = "subgen_output/" + str(job.id) + ".json"
             languageCode = getTranscribeLanguageCode(job.language)
             print(languageCode)
-            if languageCode == None:
-                transcribe.start_transcription_job(
-                        TranscriptionJobName=str(job.id),
-                        Media={'MediaFileUri': job_uri},
-                        OutputBucketName="subgenstoragebucket",
-                        OutputKey=outputFile,
-                        LanguageCode='en-US',
-                )
+            if currUser.vocab == False:
+                if languageCode == None:
+                    transcribe.start_transcription_job(
+                            TranscriptionJobName=str(job.id),
+                            Media={'MediaFileUri': job_uri},
+                            OutputBucketName="subgenstoragebucket",
+                            OutputKey=outputFile,
+                            LanguageCode='en-US',
+                    )
+                else:
+                    transcribe.start_transcription_job(
+                            TranscriptionJobName=str(job.id),
+                            Media={'MediaFileUri': job_uri},
+                            OutputBucketName="subgenstoragebucket",
+                            OutputKey=outputFile,
+                            LanguageCode=languageCode,
+                    )
             else:
-                transcribe.start_transcription_job(
-                        TranscriptionJobName=str(job.id),
-                        Media={'MediaFileUri': job_uri},
-                        OutputBucketName="subgenstoragebucket",
-                        OutputKey=outputFile,
-                        LanguageCode=languageCode,
-                )
+                if languageCode == None:
+                    transcribe.start_transcription_job(
+                            TranscriptionJobName=str(job.id),
+                            Media={'MediaFileUri': job_uri},
+                            OutputBucketName="subgenstoragebucket",
+                            OutputKey=outputFile,
+                            LanguageCode='en-US',
+                            Settings={'VocabularyName':currUser.username},
+                    )
+                else:
+                    transcribe.start_transcription_job(
+                            TranscriptionJobName=str(job.id),
+                            Media={'MediaFileUri': job_uri},
+                            OutputBucketName="subgenstoragebucket",
+                            OutputKey=outputFile,
+                            LanguageCode=languageCode,
+                            Settings={'VocabularyName':currUser.username},
+                    )
             os.remove(filename)
             #Change job status
             job.status='Transcribing'
@@ -201,16 +223,16 @@ def transcribeNewUploads(job):
     except OSError:
         print("Unable to open file: " + filename)
 
-def receiveVocabWords(user, words):
-    currUser = User.objects.get(username=user)
+def receiveVocabWords(emailAdd, words):
+    currUser = User.objects.get(email=emailAdd)
     if not currUser:
         err = "User does not exist"
         return err
     else:
         if currUser.vocab == False:
-            return genVocabFile(user, words)
+            return genVocabFile(currUser.username, words)
         else:
-            return updateVocabFile(user, words)
+            return updateVocabFile(currUser.username, words)
 
 
 #Function to create text file for vocab and upload to s3
@@ -269,17 +291,18 @@ def genVocabFile(user, words):
             VocabularyFileUri=uriLoc
     )
     
-    while True:
-        status = transcribe.get_vocabulary(VocabularyName=user)
-        if status['VocabularyState'] in ['READY']:
-            print("Vocabulary successfully created\n")
-            break
-        elif status['VocabularyState'] in['FAILED']:
-            print("Vocabulary could not be created, failure reason: \n \t")
-            print(status['FailureReason']  + "\n")
-            break
-        else:
-            time.sleep(10)
+    ### Keeps checking to see if vocab is accepted or fails ... can be time consuming
+    # while True:
+    #     status = transcribe.get_vocabulary(VocabularyName=user)
+    #     if status['VocabularyState'] in ['READY']:
+    #         print("Vocabulary successfully created\n")
+    #         break
+    #     elif status['VocabularyState'] in['FAILED']:
+    #         print("Vocabulary could not be created, failure reason: \n \t")
+    #         print(status['FailureReason']  + "\n")
+    #         break
+    #     else:
+    #         time.sleep(10)
 
     #Update user model to indicate vocabulary exists for user
     currUser = User.objects.get(username=user)
@@ -365,30 +388,32 @@ def updateVocabFile(user, words):
             VocabularyFileUri=uriLoc
     )
 
-    while True:
-        status = transcribe.get_vocabulary(VocabularyName=user)
-        if status['VocabularyState'] in ['READY']:
-            print("Vocabulary successfully created\n")
-            break
-        elif status['VocabularyState'] in['FAILED']:
-            print("Vocabulary could not be created, failure reason: \n \t")
-            print(status['FailureReason']  + "\n")
-            break
-        else:
-            time.sleep(10)
+    ### Keeps checking to see if vocab is accepted or fails ... can be time consuming
+    # while True:
+    #     status = transcribe.get_vocabulary(VocabularyName=user)
+    #     if status['VocabularyState'] in ['READY']:
+    #         print("Vocabulary successfully created\n")
+    #         break
+    #     elif status['VocabularyState'] in['FAILED']:
+    #         print("Vocabulary could not be created, failure reason: \n \t")
+    #         print(status['FailureReason']  + "\n")
+    #         break
+    #     else:
+    #         time.sleep(10)
     return output
 
 #Function to retrieve vocabulary for displaying
 #args --
 #   user - username for retrieval
-def getVocab(user):
-    currUser = User.objects.get(username=user)
+def getVocab(emailAdd):
+    currUser = User.objects.get(email=emailAdd)
     if not currUser:
         print("User does not exist")
         return "Could not find user"
     if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
+    user = currUser.username
     s3 = boto3.resource('s3')
     fileUri = "vocab/" + user + ".txt"
     filename = user + ".txt"
@@ -419,8 +444,8 @@ def getVocab(user):
 #Function to delete users vocabulary file
 #args -- 
 #   user - username of user whose vocabulary needs deleted
-def deleteVocab(user):
-    currUser = User.objects.get(username=user)
+def deleteVocab(emailAdd):
+    currUser = User.objects.get(email=emailAdd)
     if not currUser:
         print("User does not exist")
         return
@@ -428,7 +453,7 @@ def deleteVocab(user):
     if currUser.vocab == False:
         print("User does not have a vocabulary file. Please create one\n")
         return
-    
+    user = currUser.username
     transcribe = boto3.client('transcribe')
     transcribe.delete_vocabulary(VocabularyName = user)
     s3 = boto3.client('s3')

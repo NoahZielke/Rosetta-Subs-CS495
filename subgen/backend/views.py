@@ -138,29 +138,27 @@ def input_vocabulary(request):
     if request.method == 'POST':
         json_data = json.loads(request.body)
         try:
-            username = json_data['username']
+            email = json_data['email']
             words = json_data['words']
         except KeyError:
             return HttpResponse("Format Error")
-        output = receiveVocabWords(username, words)
+        output = receiveVocabWords(email, words)
         return JsonResponse(output, safe=False)
 
 @csrf_exempt
 def delete_vocabulary(request):
     if request.method == 'POST':
-        username = request.POST.get("username", '')
-        deleteVocab(username)
+        email = request.POST.get("email", '')
+        deleteVocab(email)
 
-    now = datetime.datetime.now()
-    html = "<html><body>It is now %s.</body></html>" % now
-    return HttpResponse(html)
+    output = "Deleted Vocabulary"
+    return HttpResponse(output)
 
 @csrf_exempt
 def display_vocabulary(request):
     if request.method == 'POST':
-        username = request.POST.get("username", '')
-        print("USER:  " + username)
-        output = getVocab(username)
+        email = request.POST.get("email", '')
+        output = getVocab(email)
         return JsonResponse(output, safe=False)
 
 def downloadFile(request, file):
