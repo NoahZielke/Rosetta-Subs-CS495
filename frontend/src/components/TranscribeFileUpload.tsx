@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FileList } from "./FileList";
 import TranscriptionJob from "./TranscriptionJob";
+import Form from 'react-bootstrap/Form';
 
 const CloudUploadSVG: React.FC<{ width?: string; height?: string }> = ({
   width,
@@ -86,6 +87,7 @@ const Check = () => (
 );
 export const TranscribeFileUpload: React.FC = (props) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [language, setLanguage] = useState("English");
   const [complete, setComplete] = useState(false);
   const [selected, setSelected] = useState({});
   const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
@@ -131,12 +133,54 @@ export const TranscribeFileUpload: React.FC = (props) => {
       <>
         <UploadDropzone setFiles={(file) => setFiles(file)} />
         <div className='p-4'>
-          <div style={{ display: "flex", alignItems: "center", height: 80 }}>
-            <h4 style={{ marginBottom: 0 }}>Select Files to Proceed</h4>
-            <TranscriptionJob
-              files={filesToUpload}
-              handleUploadComplete={() => handleUploadFinished()}
-            />
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-6">
+                <h4>Select Language of Current Video(s)</h4>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-4">
+                <Form.Control
+                      as="select"
+                      onChange={e => setLanguage(e.target.value)}
+                  >
+                    <option value="English, US">English</option>
+                    <option value="Arabic, Modern Standard">Arabic</option>
+                    <option value="Chinese, Simplified">Chinese</option>
+                    <option value="Danish">Danish</option>
+                    <option value="Dutch">Dutch</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                    <option value="Hebrew">Hebrew</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Indonesian">Indonesian</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Korean">Korean</option>
+                    <option value="Malay">Malay</option>
+                    <option value="Portuguese">Portuguese</option>
+                    <option value="Russian">Russian</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Telugu">Telugu</option>
+                    <option value="Thai">Thai</option>
+                    <option value="Turkish">Turkish</option>
+                </Form.Control>
+              </div>
+            </div>
+          </div>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-12" style={{ display: "flex", alignItems: "center", height: 80 }}>
+                <h4 style={{ marginBottom: 0 }}>Select Files to Proceed</h4>
+                <TranscriptionJob
+                  language={language}
+                  files={filesToUpload}
+                  handleUploadComplete={() => handleUploadFinished()}
+                />
+              </div>
+            </div>
           </div>
           <FileList
             files={files}

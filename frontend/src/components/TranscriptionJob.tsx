@@ -21,9 +21,10 @@ const ArrowRight: React.FC<any> = (props) => (
 );
 const TranscriptionJob: React.FC<{
   files: File[];
+  language: string;
 
   handleUploadComplete: () => void;
-}> = ({ files, handleUploadComplete }) => {
+}> = ({ files, language, handleUploadComplete }) => {
   const { user } = useContext(UserContext);
   const [uploading, setUploading] = useState(false);
 
@@ -39,6 +40,7 @@ const TranscriptionJob: React.FC<{
       }
       formData.append("filename", file.name);
       formData.append("file", file);
+      formData.append("language", language);
 
       axios({
         method: "POST",
