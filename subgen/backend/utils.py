@@ -216,7 +216,6 @@ def genVocabFile(user, words):
         formWord = word.replace("-", " ")
         formWord = formWord.translate(str.maketrans('','',string.punctuation))
         convWord = ipa.convert(text=formWord, stress_marks="none")
-
         if '*' in convWord:
             print("Unable to translate word: " + word + " to IPA for vocabulary creation\n")
             ipaWord = ""
