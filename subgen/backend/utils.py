@@ -1,4 +1,5 @@
 from backend.models import Job
+from user.models import User
 from django.conf import settings
 from email import encoders
 from email.mime.base import MIMEBase
@@ -10,6 +11,7 @@ from .srtUtils import *
 import eng_to_ipa as ipa
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.video.io.VideoFileClip import VideoFileClip
+import string
 
 
 def pullJSONGenSRTCompleted(jobName):
@@ -199,26 +201,62 @@ def transcribeNewUploads(job):
     except OSError:
         print("Unable to open file: " + filename)
 
-# Function to create text file for vocab and upload to s3
-# args --
+def receiveVocabWords(user, words):
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        err = "User does not exist"
+        return err
+    else:
+        if currUser.vocab == False:
+            return genVocabFile(user, words)
+        else:
+            return updateVocabFile(user, words)
+
+
+#Function to create text file for vocab and upload to s3
+#args --
 #   user - username for vocab file
 #   words - array of words/phrases/acronym
 def genVocabFile(user, words):
+
+    symbols = ["a", "b", "d", "f", "g", "h", "i", "j", "k", "l", "m", "n", "p", "s", "t", "u", "v", "w", "z",
+                 "ə", "eɪ", "ɑ", "æ","ə","ɔ",
+                "aʊ",  "aɪ", "ʧ", "ð", "ɛ",
+                "h", "ɪ", "ʤ", "ŋ", "oʊ", "ɔɪ",
+                "ʃ", "θ", "ʊ", "u", "ʒ", "l̩", "n̩", "ɝ", "ɡ", "ɹ", "ʌ", "ʍ"]
+
     filename = str(settings.BASE_DIR)+"/media/temp/" + user + ".txt"
     f = open(filename, "w+")
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
+    output = []
     for word in words:
-        if ipa.isin_cmu(word):
-            ipaWord = ipa.convert(word)
-        else:
+        output.append(word)
+        formWord = word.replace("-", " ")
+        formWord = formWord.translate(str.maketrans('','',string.punctuation))
+        convWord = ipa.convert(text=formWord, stress_marks="none")
+        if '*' in convWord:
+            print("Unable to translate word: " + word + " to IPA for vocabulary creation\n")
             ipaWord = ""
+        else:
+            ipaWord = convWord.replace("  ", " ")
+            ipaWord = ipaWord.strip()
+
+            segments = ipaWord.split(" ")
+            for seg in segments:
+                if seg in symbols:
+                    pass
+                else:
+                    print("Unsupported character in translation, IPA unavailable for this word")
+                    ipaWord = ""
+                    break
+
         dashedWord = word.replace(' ', '-')
-        newLine = dashedWord + "\t" + ipaWord + "\t\t" + word + "\r\n"
+        newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
 
     uploadFileName = "vocab/" + user + ".txt"
-    s3 = boto3.client('s3')
+    s3 = boto3.resource('s3')
     data = open(filename, 'rb')
     s3.Bucket('subgenstoragebucket').put_object(Key=uploadFileName, Body=data)
     os.remove(filename)
@@ -226,14 +264,179 @@ def genVocabFile(user, words):
     transcribe = boto3.client('transcribe')
     uriLoc = "s3://subgenstoragebucket/" + uploadFileName
     transcribe.create_vocabulary(
-        VocabularyName=user,
-        LanguageCode='en-US',
-        VocabularyFileUri=uriLoc
+            VocabularyName=user,
+            LanguageCode='en-US',
+            VocabularyFileUri=uriLoc
+    )
+    
+    while True:
+        status = transcribe.get_vocabulary(VocabularyName=user)
+        if status['VocabularyState'] in ['READY']:
+            print("Vocabulary successfully created\n")
+            break
+        elif status['VocabularyState'] in['FAILED']:
+            print("Vocabulary could not be created, failure reason: \n \t")
+            print(status['FailureReason']  + "\n")
+            break
+        else:
+            time.sleep(10)
+
+    #Update user model to indicate vocabulary exists for user
+    currUser = User.objects.get(username=user)
+    currUser.vocab = True
+    currUser.save()
+    return output
+
+#Function to update text file for vocab and upload to s3
+#args --
+#   user - username for vocab file
+#   words - array of words/phrases/acronym
+def updateVocabFile(user, words):
+    symbols = ["a", "b", "d", "f", "g", "h", "i", "j", "k", "l", "m", "n", "p",
+                 "s", "t", "u", "v", "w", "z", "ə", "eɪ", "ɑ", "æ","ə","ɔ",
+                "aʊ",  "aɪ", "ʧ", "ð", "ɛ", "h", "ɪ", "ʤ", "ŋ", "oʊ", "ɔɪ",
+                "ʃ", "θ", "ʊ", "u", "ʒ", "l̩", "n̩", "ɝ", "ɡ", "ɹ", "ʌ", "ʍ"]
+
+    s3 = boto3.resource('s3')
+    downloadFileName = user + ".txt"
+    try:
+        s3.Bucket('subgenstoragebucket').download_file('vocab/'+downloadFileName, str(settings.BASE_DIR)+'/media/temp/'+ downloadFileName)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Vocab file could not be found")
+            return "Vocab file could not be found"
+        else:
+            raise
+    
+    filename = str(settings.BASE_DIR) + "/media/temp/" + user + ".txt"
+
+    output = []
+    q = open(filename, "r")
+    lines = q.readlines()
+    for line in lines:
+        chunks = line.split("\t")
+        if chunks[3] == "DisplayAs":
+            continue
+        output.append(chunks[3])
+    q.close()
+
+    f = open(filename, "a")
+    for word in words:
+        output.append(word)
+        formWord = word.replace("-", " ")
+        formWord = formWord.translate(str.maketrans('','',string.punctuation))
+        convWord = ipa.convert(text=formWord, stress_marks="none")
+
+        if '*' in convWord:
+            print("Unable to translate word: " + word + " to IPA for vocabulary creation\n")
+            ipaWord = ""
+        else:
+            ipaWord = convWord.replace("  ", " ")
+            ipaWord = ipaWord.strip()
+
+            segments = ipaWord.split(" ")
+            for seg in segments:
+                if seg in symbols:
+                    pass
+                else:
+                    print("Unsupported character in translation, IPA unavailable for this word")
+                    ipaWord = ""
+                    break
+
+        dashedWord = word.replace(' ', '-')
+        newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
+        f.write(newLine)
+    f.close()
+
+    #s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
+    s3.Bucket('subgenstoragebucket').delete_objects(Delete={
+        'Objects': [{'Key':'vocab/'+downloadFileName}]
+    })
+
+    data = open(filename, 'rb')
+    s3.Bucket('subgenstoragebucket').put_object(Key='vocab/'+downloadFileName, Body=data)
+    #os.remove(filename)
+
+    transcribe = boto3.client('transcribe')
+    uriLoc = "s3://subgenstoragebucket/vocab/" + downloadFileName
+    transcribe.update_vocabulary(
+            VocabularyName=user,
+            LanguageCode='en-US',
+            VocabularyFileUri=uriLoc
     )
 
-    # Update user model to indicate vocabulary exists for user
-    #currUser = User.objects.filter(name=user)
-    #currUser.vocab = true
+    while True:
+        status = transcribe.get_vocabulary(VocabularyName=user)
+        if status['VocabularyState'] in ['READY']:
+            print("Vocabulary successfully created\n")
+            break
+        elif status['VocabularyState'] in['FAILED']:
+            print("Vocabulary could not be created, failure reason: \n \t")
+            print(status['FailureReason']  + "\n")
+            break
+        else:
+            time.sleep(10)
+    return output
+
+#Function to retrieve vocabulary for displaying
+#args --
+#   user - username for retrieval
+def getVocab(user):
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        print("User does not exist")
+        return "Could not find user"
+    if currUser.vocab == False:
+        print("User does not have a vocabulary file. Please create one\n")
+        return
+    s3 = boto3.resource('s3')
+    fileUri = "vocab/" + user + ".txt"
+    filename = user + ".txt"
+    try:
+        s3.Bucket('subgenstoragebucket').download_file(fileUri, str(settings.BASE_DIR)+'/media/temp/'+ filename)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("Vocab file could not be found")
+        else:
+            raise
+
+    fileLoc = str(settings.BASE_DIR) + "/media/temp/" + filename
+    f = open(fileLoc, "r")
+    lines = f.readlines()
+    vocabWords = []
+
+    for line in lines:
+        chunks = line.split("\t")
+        chunk = chunks[3][:-1]
+        if chunk == "DisplayAs":
+            continue
+        vocabWords.append(chunk)
+    print(vocabWords)
+    f.close()
+    os.remove(fileLoc)
+    return vocabWords
+
+#Function to delete users vocabulary file
+#args -- 
+#   user - username of user whose vocabulary needs deleted
+def deleteVocab(user):
+    currUser = User.objects.get(username=user)
+    if not currUser:
+        print("User does not exist")
+        return
+        
+    if currUser.vocab == False:
+        print("User does not have a vocabulary file. Please create one\n")
+        return
+    
+    transcribe = boto3.client('transcribe')
+    transcribe.delete_vocabulary(VocabularyName = user)
+    s3 = boto3.client('s3')
+    fileUri = "vocab/" + user + ".txt"
+    s3.delete_object(Bucket='subgenstoragebucket', Key=fileUri)
+
+    currUser.vocab = False
+    currUser.save()
 
 def burnCaption(videoFile, srtFile, outputFile):
     myvideo = VideoFileClip(videoFile)

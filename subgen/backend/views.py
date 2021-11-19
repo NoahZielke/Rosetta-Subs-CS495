@@ -8,11 +8,11 @@ from rest_framework import status
 from .serializers import UserSerializer, GroupSerializer, JobSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job
-from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, burnCaption, sendEmail
+from .utils import pullJSONGenSRTCompleted, sendFilesCompleted, pullJSONGenSRTFailed, sendFilesFailed, transcribeNewUploads, burnCaption, sendEmail, getVocab, receiveVocabWords, deleteVocab
 from .srtUtils import writeTranslationToSRT
 from .audioUtils import getAudioTranscript, overwriteAudio, getOrigAudio
 import json, datetime, shutil, os, random, string
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from zipfile import ZipFile
 from django.core.files.storage import FileSystemStorage
 
@@ -133,10 +133,35 @@ def burnCaptions(request):
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
+@csrf_exempt
 def input_vocabulary(request):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        try:
+            username = json_data['username']
+            words = json_data['words']
+        except KeyError:
+            return HttpResponse("Format Error")
+        output = receiveVocabWords(username, words)
+        return JsonResponse(output, safe=False)
+
+@csrf_exempt
+def delete_vocabulary(request):
+    if request.method == 'POST':
+        username = request.POST.get("username", '')
+        deleteVocab(username)
+
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
+
+@csrf_exempt
+def display_vocabulary(request):
+    if request.method == 'POST':
+        username = request.POST.get("username", '')
+        print("USER:  " + username)
+        output = getVocab(username)
+        return JsonResponse(output, safe=False)
 
 def downloadFile(request, file):
     returnFile = settings.MEDIA_ROOT + '/user_downloads/' + file
