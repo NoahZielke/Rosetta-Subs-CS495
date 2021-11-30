@@ -79,7 +79,7 @@ const LandingPage = () => {
             </p>
             <div className="pb-4">
               <a
-                href='https://www.youtube.com/watch?v=zkiebh9p5mE&ab_channel=NoahZielke'
+                href='https://www.youtube.com/watch?v=ppblo7FpPiM&ab_channel=NoahZielke'
                 target='_blank'
                 rel='noreferrer'
                 className='btn btn-dark'>
