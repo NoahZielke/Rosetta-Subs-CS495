@@ -229,10 +229,10 @@ def receiveVocabWords(emailAdd, words):
         err = "User does not exist"
         return err
     else:
-        if currUser.vocab == False:
-            return genVocabFile(currUser.username, words)
-        else:
-            return updateVocabFile(currUser.username, words)
+        if currUser.vocab == True:
+            deleteVocab(emailAdd)
+        return genVocabFile(currUser.username, words)
+
 
 
 #Function to create text file for vocab and upload to s3
@@ -252,6 +252,8 @@ def genVocabFile(user, words):
     f.write("Phrase\tIPA\tSoundsLike\tDisplayAs\r\n")
     output = []
     for word in words:
+        if not word.isalpha():
+            continue
         output.append(word)
         formWord = word.replace("-", " ")
         formWord = formWord.translate(str.maketrans('','',string.punctuation))
@@ -338,7 +340,7 @@ def updateVocabFile(user, words):
     lines = q.readlines()
     for line in lines:
         chunks = line.split("\t")
-        if chunks[3] == "DisplayAs":
+        if chunks[3] == "DisplayAs" or chunks[3] == "DisplayAs\n":
             continue
         output.append(chunks[3])
     q.close()
@@ -371,14 +373,13 @@ def updateVocabFile(user, words):
         f.write(newLine)
     f.close()
 
-    #s3.delete_object(Bucket='subgenstoragebucket', Key='vocab/'+downloadFileName)
     s3.Bucket('subgenstoragebucket').delete_objects(Delete={
         'Objects': [{'Key':'vocab/'+downloadFileName}]
     })
 
     data = open(filename, 'rb')
     s3.Bucket('subgenstoragebucket').put_object(Key='vocab/'+downloadFileName, Body=data)
-    #os.remove(filename)
+    os.remove(filename)
 
     transcribe = boto3.client('transcribe')
     uriLoc = "s3://subgenstoragebucket/vocab/" + downloadFileName
@@ -433,7 +434,7 @@ def getVocab(emailAdd):
     for line in lines:
         chunks = line.split("\t")
         chunk = chunks[3][:-1]
-        if chunk == "DisplayAs":
+        if chunk == "DisplayAs" or chunk == "DisplayAs\n":
             continue
         vocabWords.append(chunk)
     print(vocabWords)
