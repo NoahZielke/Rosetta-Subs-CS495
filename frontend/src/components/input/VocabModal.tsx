@@ -209,9 +209,9 @@ export const VocabModal: React.FC<{
     const newWords: string[] = [];
     if (words) {
       words.forEach((word) => newWords.push(word));
-      newWords.push(`Word ${words.length + 1}`);
+      newWords.push(`Word`);
     } else {
-      newWords.push("Word 1");
+      newWords.push("Word");
     }
     setWords(newWords);
   };
