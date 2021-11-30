@@ -149,10 +149,8 @@ def input_vocabulary(request):
 def delete_vocabulary(request):
     if request.method == 'POST':
         email = request.POST.get("email", '')
-        deleteVocab(email)
-
-    output = "Deleted Vocabulary"
-    return HttpResponse(output)
+        output = deleteVocab(email)
+        return HttpResponse(output)
 
 @csrf_exempt
 def display_vocabulary(request):

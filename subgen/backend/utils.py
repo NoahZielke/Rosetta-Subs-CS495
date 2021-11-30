@@ -229,10 +229,10 @@ def receiveVocabWords(emailAdd, words):
         err = "User does not exist"
         return err
     else:
-        if currUser.vocab == False:
-            return genVocabFile(currUser.username, words)
-        else:
-            return updateVocabFile(currUser.username, words)
+        if currUser.vocab == True:
+            deleteVocab(emailAdd)
+        return genVocabFile(currUser.username, words)
+
 
 
 #Function to create text file for vocab and upload to s3
@@ -272,7 +272,7 @@ def genVocabFile(user, words):
                     ipaWord = ""
                     break
 
-        dashedWord = word.replace(' ', '-')
+        dashedWord = formWord.replace(' ', '-')
         newLine = dashedWord + "\t" + ipaWord + "\t" + "\t" + word + "\r\n"
         f.write(newLine)
     f.close()
@@ -433,7 +433,7 @@ def getVocab(emailAdd):
     for line in lines:
         chunks = line.split("\t")
         chunk = chunks[3][:-1]
-        if chunk == "DisplayAs":
+        if chunk == "DisplayAs" or chunk == "DisplayAs\n":
             continue
         vocabWords.append(chunk)
     print(vocabWords)
@@ -447,12 +447,11 @@ def getVocab(emailAdd):
 def deleteVocab(emailAdd):
     currUser = User.objects.get(email=emailAdd)
     if not currUser:
-        print("User does not exist")
-        return
+        return "User does not exist"
         
     if currUser.vocab == False:
-        print("User does not have a vocabulary file. Please create one\n")
-        return
+        return "User does not have a vocabulary file. Please create one\n"
+        
     user = currUser.username
     transcribe = boto3.client('transcribe')
     transcribe.delete_vocabulary(VocabularyName = user)
@@ -462,6 +461,7 @@ def deleteVocab(emailAdd):
 
     currUser.vocab = False
     currUser.save()
+    return "Vocabulary Deleted"
 
 def burnCaption(videoFile, srtFile, outputFile):
     myvideo = VideoFileClip(videoFile)
