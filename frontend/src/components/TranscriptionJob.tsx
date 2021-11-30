@@ -3,22 +3,25 @@ import React, { useContext, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { UserContext } from "../context/UserContext";
+import { VocabButton } from "./input/VocabModal";
 
 const ArrowRight: React.FC<any> = (props) => (
   <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='16'
-    height='16'
-    fill='currentColor'
-    className='bi bi-arrow-right'
-    viewBox='0 0 16 16'
-    {...props}>
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    fill="currentColor"
+    className="bi bi-arrow-right"
+    viewBox="0 0 16 16"
+    {...props}
+  >
     <path
-      fillRule='evenodd'
-      d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'
+      fillRule="evenodd"
+      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
     />
   </svg>
 );
+
 const TranscriptionJob: React.FC<{
   files: File[];
   language: string;
@@ -65,10 +68,11 @@ const TranscriptionJob: React.FC<{
   if (!user) {
     return (
       <Button
-        variant='outline-primary'
-        size='sm'
+        variant="outline-primary"
+        size="sm"
         style={{ marginLeft: "1rem" }}
-        disabled>
+        disabled
+      >
         Sign in!
         <ArrowRight style={{ marginLeft: ".5rem" }} />
       </Button>
@@ -76,21 +80,28 @@ const TranscriptionJob: React.FC<{
   }
   if (files.length === 0) {
     return (
-      <Button
-        variant='outline-primary'
-        size='sm'
-        style={{ marginLeft: "1rem" }}
-        disabled>
-        Select at least 1 file!
-        <ArrowRight style={{ marginLeft: ".5rem" }} />
-      </Button>
+      <>
+        <VocabButton />
+
+        <Button
+          variant="outline-primary"
+          size="sm"
+          style={{ marginLeft: "1rem" }}
+          disabled
+        >
+          Select at least 1 file!
+          <ArrowRight style={{ marginLeft: ".5rem", marginBottom: ".15rem" }} />
+        </Button>
+      </>
     );
   }
   return (
     <>
+      <VocabButton />
+
       <Button
-        variant='outline-primary'
-        size='sm'
+        variant="outline-primary"
+        size="sm"
         style={{
           marginLeft: "1rem",
           display: "flex",
@@ -98,16 +109,18 @@ const TranscriptionJob: React.FC<{
           justifyContent: "center",
         }}
         onClick={() => handleTranscribeRequest()}
-        disabled={uploading}>
+        disabled={uploading}
+      >
         {uploading
           ? "Transcribing"
           : `Transcribe ${files.length}
         ${files.length === 1 ? " video" : " videos"}`}
         {uploading ? (
           <Spinner
-            animation='border'
-            role='status'
-            style={{ height: 20, width: 20, marginLeft: 8 }}></Spinner>
+            animation="border"
+            role="status"
+            style={{ height: 20, width: 20, marginLeft: 8 }}
+          ></Spinner>
         ) : (
           <ArrowRight style={{ marginLeft: ".5rem" }} />
         )}
